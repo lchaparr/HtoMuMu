@@ -34,7 +34,12 @@ public :
    ~BSM_Analysis();
 
    // create Histo maps
-   void crateHistoMasps (int);
+   void crateHistoMasps(int);
+   bool passRecoTrigger(string, string); 
+   TLorentzVector MuonsVectors(TLorentzVector&, TLorentzVector&);
+   TLorentzVector PhotonsVectors(TLorentzVector&);
+   double RelIso(double&, double&);
+
    // Define maps for histograms
    // For muons
    std::map<unsigned int, TH1*> _hmap_lead_muon_pT;
@@ -62,6 +67,7 @@ public :
    std::map<unsigned int, TH1*> _hmap_threebody_heavy;
    std::map<unsigned int, TH1*> _hmap_threebody_light_dmass;
    std::map<unsigned int, TH1*> _hmap_threebody_heavy_dmass;
+   std::map<unsigned int, TH1*> _hmap_photon_E;
    std::map<unsigned int, TH1*> _hmap_photon_pT;
    std::map<unsigned int, TH1*> _hmap_photon_eta;
    std::map<unsigned int, TH1*> _hmap_photon_phi;
@@ -74,6 +80,7 @@ public :
    void setBranchAddress(TTree* BOOM);
    vector<string>  *Trigger_names;
    vector<int>     *Trigger_decision;
+   
    vector<double>  *Muon_pt;
    vector<double>  *Muon_eta;
    vector<double>  *Muon_phi;
@@ -83,6 +90,7 @@ public :
    vector<bool>    *Muon_loose;
    vector<bool>    *Muon_medium;
    vector<bool>    *Muon_soft;
+   vector<bool>    *Muon_pf;
    vector<double>  *Muon_isoCharged;
    vector<double>  *Muon_isoSum;
    vector<double>  *Muon_isoCharParPt;
