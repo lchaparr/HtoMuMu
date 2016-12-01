@@ -1,3 +1,8 @@
+//*********************************************************************************************
+// BSM Analysis: Main analysis code for H2Mu. The code includes the main selection for decay 
+// 				 channel, also includes FSR recovery. 
+//*********************************************************************************************
+
 #include "BSM_Analysis.h"
 
 string myTrigger1 = "HLT_IsoMu24_v";
@@ -7,9 +12,13 @@ int main (int argc, char *argv[])
 {
 	//-----------------------histogram folders--------------------------
 	TFile * MassHisto = new TFile(argv[2], "RECREATE");
-	int nDir = 1;
+	int nDir = 5;
 	TDirectory *theDirectory[nDir];
-	theDirectory[0] = MassHisto->mkdir("AfterDimuonSelection");
+	theDirectory[0] = MassHisto->mkdir("AfterDimuonSel");
+	theDirectory[1] = MassHisto->mkdir("AfterDimuonCommonSel");
+	theDirectory[2] = MassHisto->mkdir("AfterPhotonSel");
+	theDirectory[3] = MassHisto->mkdir("AfterDimuonGenSel");
+	theDirectory[4] = MassHisto->mkdir("AfterGenPhotonSel");
 	cout <<argv[1]<<endl;
 	BSM_Analysis BSM_Analysis_(MassHisto, theDirectory, nDir, argv[1]);	
 }
@@ -43,8 +52,9 @@ BSM_Analysis::BSM_Analysis(TFile* theFile, TDirectory *cdDir[], int nDir, char* 
 	
 	//---------------------counters---------------------------------------
 		
-	int trigger_evt =0;
-	int dimuon_evt =0;
+	int trigger_evt = 0;
+	int dimuon_evt = 0;
+	int dimuon_initialsel_evt = 0;
 	/*int match_evt = 0;
 	int dimuon_match_evt = 0;
 	
@@ -75,14 +85,24 @@ BSM_Analysis::BSM_Analysis(TFile* theFile, TDirectory *cdDir[], int nDir, char* 
 		TLorentzVector dalitz_Subfirst_muon_vec(0., 0., 0., 0.);
 		TLorentzVector Reco_lepton1(0.,0.,0.,0.);
 		TLorentzVector Reco_lepton2(0.,0.,0.,0.);
+		TLorentzVector Gen_lepton1_vec(0., 0., 0., 0.);
+		TLorentzVector Gen_lepton2_vec(0., 0., 0., 0.);
 		TLorentzVector Photon_TL(0., 0., 0., 0.);
-
+		
+		vector<TLorentzVector> Photon_vec;
+		Photon_vec.erase (Photon_vec.begin(),Photon_vec.end());
+		
+		TLorentzVector Photon_Gen_TL(0., 0., 0., 0.);
+		
+		vector<TLorentzVector> Photon_Gen_vec;
+		Photon_Gen_vec.erase (Photon_Gen_vec.begin(),Photon_Gen_vec.end());
+		
 		int lmuon_counter = 0;
 		int smuon_counter = 0;
 		double RelIso1 = 0, RelIso2 = 0;
 		
 	
-		int pass_dalitz_id[nDir] = {0};
+		int pass_h2mu_id[nDir] = {0};
 		
 		//----------------------control booleans------------------------
 		bool lepton1_tight = false;
@@ -103,19 +123,47 @@ BSM_Analysis::BSM_Analysis(TFile* theFile, TDirectory *cdDir[], int nDir, char* 
 		MuonsVectors(Reco_lepton1, Reco_lepton2);
 		if((Reco_lepton1 + Reco_lepton2).M()!= 0.)
 		{
-			pass_dalitz_id[0] = 1;
+			pass_h2mu_id[0] = 1;
 			dimuon_evt++;
-			
-
-		//	RelIso(RelIso1, RelIso2); Falta hacer seleccion de eta, pt y reliso.
-
+			if(Reco_lepton1.Pt()>24 && abs(Reco_lepton1.Eta())<2.4 && passRecoTrigger(myTrigger1, myTrigger2))
+			{
+				if(Reco_lepton2.Pt()>10 && abs(Reco_lepton2.Eta())<2.4)
+				{
+					RelIso(RelIso1,RelIso2);
+					if(RelIso1 <0.1 && RelIso2 <0.1)
+					{
+					pass_h2mu_id[1] = 1;
+					dimuon_initialsel_evt++;	
+					}
+				}
+			}
 		}
 
+
+		PhotonsVectors(Photon_vec, Photon_TL);
+		if(Photon_vec.size()>0)
+		{
+			pass_h2mu_id[2] = 1;
+		}
+			
+		
+		//--------------------- Gen Level --------------------------------
+		GenleptonVector(Gen_lepton1_vec, Gen_lepton2_vec);
+		if((Gen_lepton1_vec + Gen_lepton2_vec).M()!=0.)
+		{
+			pass_h2mu_id[3] = 1;
+		}
+		
+		PhotonsGenVectors(Photon_Gen_vec, Photon_Gen_TL);
+		if(Photon_Gen_vec.size()>0)
+		{
+			pass_h2mu_id[4] = 1;
+		}
 		
 		//----------------------Fill the histograms-----------------------
 		for (int i = 0; i < nDir; i++)
 		{
-			if (pass_dalitz_id[i] == 1)
+			if (pass_h2mu_id[i] == 1 && i!= 2 && i!=3 && i!=4)
 			{			
 				_hmap_diMuon_mass[i]->Fill((Reco_lepton1 + Reco_lepton2).M(),pu_weight);
 				_hmap_lead_muon_pT[i]->Fill(Reco_lepton1.Pt(),pu_weight);
@@ -124,14 +172,38 @@ BSM_Analysis::BSM_Analysis(TFile* theFile, TDirectory *cdDir[], int nDir, char* 
 				_hmap_slead_muon_eta[i]->Fill(Reco_lepton2.Eta(),pu_weight);
 				_hmap_lead_muon_phi[i]->Fill(Reco_lepton1.Phi(),pu_weight);
 				_hmap_slead_muon_phi[i]->Fill(Reco_lepton2.Phi(),pu_weight);
+			}
+			else if(pass_h2mu_id[i] == 1 && i == 2)
+			{
 				_hmap_photon_E[i]->Fill(Photon_TL.E(),pu_weight);
-			}     
+				_hmap_photon_pT[i]->Fill(Photon_TL.Pt(),pu_weight);
+				_hmap_photon_eta[i]->Fill(Photon_TL.Eta(),pu_weight);
+				_hmap_photon_phi[i]->Fill(Photon_TL.Phi(),pu_weight);
+			}
+			else if (pass_h2mu_id[i] == 1 && i == 3)
+			{
+				_hmap_diMuon_mass[i]->Fill((Gen_lepton1_vec + Gen_lepton2_vec).M(),pu_weight);
+				_hmap_lead_muon_pT[i]->Fill(Gen_lepton1_vec.Pt(),pu_weight);
+				_hmap_slead_muon_pT[i]->Fill(Gen_lepton2_vec.Pt(),pu_weight);
+				_hmap_lead_muon_eta[i]->Fill(Gen_lepton1_vec.Eta(),pu_weight);
+				_hmap_slead_muon_eta[i]->Fill(Gen_lepton2_vec.Eta(),pu_weight);
+				_hmap_lead_muon_phi[i]->Fill(Gen_lepton1_vec.Phi(),pu_weight);
+				_hmap_slead_muon_phi[i]->Fill(Gen_lepton2_vec.Phi(),pu_weight);
+			}			   
+			else if(pass_h2mu_id[i] == 1 && i == 4)
+			{
+				_hmap_photon_E[i]->Fill(Photon_Gen_TL.E(),pu_weight);
+				_hmap_photon_pT[i]->Fill(Photon_Gen_TL.Pt(),pu_weight);
+				_hmap_photon_eta[i]->Fill(Photon_Gen_TL.Eta(),pu_weight);
+				_hmap_photon_phi[i]->Fill(Photon_Gen_TL.Phi(),pu_weight);
+			}
 		}
 	}
 
 	cout<<"==============================="<<endl;
 	cout<<"Events that pass the trigger:     "<<trigger_evt<<endl;
 	cout<<"Events that pass the dimuon selection:     "<<dimuon_evt<<endl;
+	cout<<"Events that pass the common selection (pt, eta and RelIso):     "<<dimuon_initialsel_evt<<endl;
 	cout<<"==============================="<<endl;
 	/*cout<<"events that pass match and dimuon selection:  "<<dimuon_match_evt<<endl;
 	cout<<"Events that pass the Muon ID(match+dimuon):    "<<tight_id_evt<<endl;
@@ -147,14 +219,24 @@ BSM_Analysis::BSM_Analysis(TFile* theFile, TDirectory *cdDir[], int nDir, char* 
 	for (int d = 0; d < nDir; d++)
 	{
 		cdDir[d]->cd();	
-		_hmap_diMuon_mass[d]->Write();
-		_hmap_lead_muon_pT[d]->Write();
-		_hmap_slead_muon_pT[d]->Write();
-		_hmap_lead_muon_eta[d]->Write();
-		_hmap_slead_muon_eta[d]->Write();
-		_hmap_lead_muon_phi[d]->Write();
-		_hmap_slead_muon_phi[d]->Write();
-		_hmap_photon_E[d]->Write();
+		if(d!=2 && d!=4)
+		{
+			_hmap_diMuon_mass[d]->Write();
+			_hmap_lead_muon_pT[d]->Write();
+			_hmap_slead_muon_pT[d]->Write();
+			_hmap_lead_muon_eta[d]->Write();
+			_hmap_slead_muon_eta[d]->Write();
+			_hmap_lead_muon_phi[d]->Write();
+			_hmap_slead_muon_phi[d]->Write();	
+		}
+		else if(d == 2 || d == 4)
+		{
+			_hmap_photon_E[d]->Write();
+			_hmap_photon_pT[d]->Write();
+			_hmap_photon_eta[d]->Write();
+			_hmap_photon_phi[d]->Write();
+		}
+		
 	}
 	theFile->Close();
 }
@@ -163,7 +245,10 @@ BSM_Analysis::~BSM_Analysis()
 	// do anything here that needs to be done at desctruction time
 }
 
-
+//*********************************************************************************************
+//  passRecoTrigger: This function give trigger decision, "true" or "false" for each event. 
+//                   Receive the name of the trigger.
+//*********************************************************************************************
 bool BSM_Analysis::passRecoTrigger(string myTrigger1, string myTrigger2) 
 {
 	for(int nTrig = 0 ; nTrig < Trigger_names->size(); ++nTrig)
@@ -178,6 +263,10 @@ bool BSM_Analysis::passRecoTrigger(string myTrigger1, string myTrigger2)
 	return false;
 }
 
+//*********************************************************************************************
+//  MuonsVectors: Give a vector for each lepton (1 and 2). The selection taking into account 
+//                the charge of the leptons in order to make pairs with opposite signs.
+//*********************************************************************************************
 TLorentzVector BSM_Analysis::MuonsVectors(TLorentzVector& Reco_lepton1,TLorentzVector& Reco_lepton2)
 {
 	float dimuon_mass_int = 999999.;
@@ -190,26 +279,30 @@ TLorentzVector BSM_Analysis::MuonsVectors(TLorentzVector& Reco_lepton1,TLorentzV
 		{			
 			for (int m2 = 0; m2 < Muon_pt->size(); m2++)
 			{
-					if (Muon_charge->at(m1)*Muon_charge->at(m2) < 0)
+				if (Muon_charge->at(m1)*Muon_charge->at(m2) < 0)
+				{
+					first_muon_vec.SetPtEtaPhiE(Muon_pt->at(m1), Muon_eta->at(m1), Muon_phi->at(m1), Muon_energy->at(m1));
+					Subfirst_muon_vec.SetPtEtaPhiE(Muon_pt->at(m2), Muon_eta->at(m2), Muon_phi->at(m2), Muon_energy->at(m2));
+					float dimuon_mass = (first_muon_vec + Subfirst_muon_vec).M();	
+								    
+					if (dimuon_mass < dimuon_mass_int )
 					{
 						first_muon_vec.SetPtEtaPhiE(Muon_pt->at(m1), Muon_eta->at(m1), Muon_phi->at(m1), Muon_energy->at(m1));
-						Subfirst_muon_vec.SetPtEtaPhiE(Muon_pt->at(m2), Muon_eta->at(m2), Muon_phi->at(m2), Muon_energy->at(m2));
-						float dimuon_mass = (first_muon_vec + Subfirst_muon_vec).M();	
-								    
-						if (dimuon_mass < dimuon_mass_int )
-						{
-							first_muon_vec.SetPtEtaPhiE(Muon_pt->at(m1), Muon_eta->at(m1), Muon_phi->at(m1), Muon_energy->at(m1));
-							Subfirst_muon_vec.SetPtEtaPhiE(Muon_pt->at(m2), Muon_eta->at(m2), Muon_phi->at(m2), Muon_energy->at(m2));							
-							Reco_lepton1 = first_muon_vec;
-							Reco_lepton2 = Subfirst_muon_vec;
-							dimuon_mass_int = dimuon_mass;							
-						}													
-					}								
+						Subfirst_muon_vec.SetPtEtaPhiE(Muon_pt->at(m2), Muon_eta->at(m2), Muon_phi->at(m2), Muon_energy->at(m2));							
+						Reco_lepton1 = first_muon_vec;
+						Reco_lepton2 = Subfirst_muon_vec;
+						dimuon_mass_int = dimuon_mass;							
+					}													
+				}								
 			}				
 		}
 	}	
 }
 
+//*********************************************************************************************
+// RelIso: Gives the value of "Relative Isolation" for the leptons. The RelIso is calcutated as
+//         (trackIso+caloIso)/muonPt
+//*********************************************************************************************
 double BSM_Analysis::RelIso(double& RelIso1, double& RelIso2)
 {
 	float dimuon_mass_int = 999999.;
@@ -223,30 +316,30 @@ double BSM_Analysis::RelIso(double& RelIso1, double& RelIso2)
 		{			
 			for (int m2 = 0; m2 < Muon_pt->size(); m2++)
 			{
-					if (Muon_charge->at(m1)*Muon_charge->at(m2) < 0)
-					{
-						first_muon_vec.SetPtEtaPhiE(Muon_pt->at(m1), Muon_eta->at(m1), Muon_phi->at(m1), Muon_energy->at(m1));
-						Subfirst_muon_vec.SetPtEtaPhiE(Muon_pt->at(m2), Muon_eta->at(m2), Muon_phi->at(m2), Muon_energy->at(m2));
-						float dimuon_mass = (first_muon_vec + Subfirst_muon_vec).M();	
+				if (Muon_charge->at(m1)*Muon_charge->at(m2) < 0)
+				{
+					first_muon_vec.SetPtEtaPhiE(Muon_pt->at(m1), Muon_eta->at(m1), Muon_phi->at(m1), Muon_energy->at(m1));
+					Subfirst_muon_vec.SetPtEtaPhiE(Muon_pt->at(m2), Muon_eta->at(m2), Muon_phi->at(m2), Muon_energy->at(m2));
+					float dimuon_mass = (first_muon_vec + Subfirst_muon_vec).M();	
 								    
-						if (dimuon_mass < dimuon_mass_int )
-						{							
-							dimuon_mass_int = dimuon_mass;	
-							RelIso1 = Muon_isoSum->at(m1)/Muon_pt->at(m1);
-							RelIso2 = Muon_isoSum->at(m2)/Muon_pt->at(m2);					
-						}													
-					}								
+					if (dimuon_mass < dimuon_mass_int )
+					{							
+						dimuon_mass_int = dimuon_mass;	
+						RelIso1 = Muon_isoSum->at(m1)/Muon_pt->at(m1);
+						RelIso2 = Muon_isoSum->at(m2)/Muon_pt->at(m2);					
+					}													
+				}								
 			}				
 		}
 	}	
 }
 
-
-TLorentzVector BSM_Analysis::PhotonsVectors(TLorentzVector& Photon_TL)
+//*********************************************************************************************
+// PhotonsVectors: this function gives the vector that contains all the vectors of the photons
+//                 produced in each event
+//*********************************************************************************************
+void BSM_Analysis::PhotonsVectors(vector<TLorentzVector>& Photon_vec, TLorentzVector& Photon_TL)
 {
-	vector<TLorentzVector> Photon_vec;
-	Photon_vec.erase (Photon_vec.begin(),Photon_vec.end());
-	
 	for(int ph = 0; ph < Photon_pt->size(); ph++)
 	{
 		if(Photon_pt->size()>0)
@@ -257,21 +350,97 @@ TLorentzVector BSM_Analysis::PhotonsVectors(TLorentzVector& Photon_TL)
 	}
 }
 
+
+//*********************************************************************************************
+// GenleptonVectors: this function gives the vector for each generated lepton
+//*********************************************************************************************
+TLorentzVector BSM_Analysis::GenleptonVector(TLorentzVector& Gen_lepton1_vec, TLorentzVector& Gen_lepton2_vec)
+{
+	float dimuon_mass_int = 999999.;
+	double Gen_lepton1_charge;
+	double Gen_lepton2_charge;
+	TLorentzVector Gen_lepton_vec(0., 0., 0., 0.);
+	TLorentzVector Gen_antilepton_vec(0., 0., 0., 0.);
+
+	for(int g1 = 0; g1 < Gen_pt->size(); g1++)
+	{
+		if (Gen_pt->size()>1 && (Gen_status->at(g1)==1 || Gen_status->at(g1)== 2))
+		{				
+			if (Gen_pdg_id->at(g1) == 13) 
+			{
+				Gen_lepton_vec.SetPtEtaPhiE(Gen_pt->at(g1), Gen_eta->at(g1), Gen_phi->at(g1), Gen_energy->at(g1));
+				Gen_lepton1_charge = Gen_charge->at(g1);
+			}
+	
+			if(Gen_pdg_id->at(g1) == -13) 
+			{
+				Gen_antilepton_vec.SetPtEtaPhiE(Gen_pt->at(g1), Gen_eta->at(g1), Gen_phi->at(g1), Gen_energy->at(g1));
+				Gen_lepton2_charge = Gen_charge->at(g1);
+			}		
+			if (Gen_lepton1_charge*Gen_lepton2_charge < 0)
+			{
+				float dimuon_gen_mass = (Gen_lepton_vec+Gen_antilepton_vec).M();
+				if (dimuon_gen_mass < dimuon_mass_int )
+				{
+					Gen_lepton1_vec = Gen_lepton_vec;
+					Gen_lepton2_vec = Gen_antilepton_vec;	
+					dimuon_mass_int = dimuon_gen_mass;
+				}
+			}
+		}
+	}
+}
+
+//*********************************************************************************************
+// GenPhotonVectors: this function gives the vector for each generated photon
+//*********************************************************************************************
+void BSM_Analysis::PhotonsGenVectors(vector<TLorentzVector>& Photon_Gen_vec, TLorentzVector& Photon_Gen_TL)
+{
+	for(int ph = 0; ph < Gen_pt->size(); ph++)
+	{
+		if (Gen_pt->size()>0 && (Gen_status->at(ph)==1 || Gen_status->at(ph)== 2))
+		{				
+			if (Gen_pdg_id->at(ph) == 22) 
+			{
+				Photon_Gen_TL.SetPtEtaPhiE(Gen_pt->at(ph), Gen_eta->at(ph), Gen_phi->at(ph), Gen_energy->at(ph));	
+				Photon_Gen_vec.push_back(Photon_Gen_TL);
+			}
+		}		
+	}
+}
+//*********************************************************************************************
+// createHistoMasps: Definition of the histograms.
+//*********************************************************************************************
 void BSM_Analysis::crateHistoMasps (int directories)
 {
 	for (int i = 0; i < directories; i++)
 	{
 		// Muon distributions
-		_hmap_diMuon_mass[i]      = new TH1F("diMuonMass",      "m_{#mu, #mu}", 600., 0., 300.);
-		_hmap_lead_muon_pT[i]     = new TH1F("lead_muon_pT",    "#mu p_{T}",    600, 0., 300.);
-		_hmap_slead_muon_pT[i]    = new TH1F("slead_muon_pT",   "#mu p_{T}",    600, 0., 300.);
-		_hmap_lead_muon_eta[i]    = new TH1F("lead_muon_eta",   "#mu #eta",     100, -2.5, 2.5);
-		_hmap_slead_muon_eta[i]   = new TH1F("slead_muon_eta",  "#mu #eta",     100, -2.5, 2.5);
-		_hmap_lead_muon_phi[i]    = new TH1F("lead_muon_phi",   "#mu #phi",     140, -3.5, 3.5);
-		_hmap_slead_muon_phi[i]    = new TH1F("slead_muon_phi", "#mu #phi",     140, -3.5, 3.5);    
-		_hmap_photon_E[i] = new TH1F("PhotonEnergy","E#gamma", 200., 0., 50.);
+		if(i!=2 && i!=4)
+		{	
+			_hmap_diMuon_mass[i]      = new TH1F("diMuonMass",      "m_{#mu, #mu}", 600., 0., 300.);
+			_hmap_lead_muon_pT[i]     = new TH1F("lead_muon_pT",    "#mu p_{T}",    600, 0., 300.);
+			_hmap_slead_muon_pT[i]    = new TH1F("slead_muon_pT",   "#mu p_{T}",    600, 0., 300.);
+			_hmap_lead_muon_eta[i]    = new TH1F("lead_muon_eta",   "#mu #eta",     100, -2.5, 2.5);
+			_hmap_slead_muon_eta[i]   = new TH1F("slead_muon_eta",  "#mu #eta",     100, -2.5, 2.5);
+			_hmap_lead_muon_phi[i]    = new TH1F("lead_muon_phi",   "#mu #phi",     140, -3.5, 3.5);
+			_hmap_slead_muon_phi[i]    = new TH1F("slead_muon_phi", "#mu #phi",     140, -3.5, 3.5);    
+
+		}
+		else if(i == 2 || i == 4)
+		{
+			_hmap_photon_E[i] = new TH1F("PhotonEnergy","E_{#gamma}", 200., 0., 100.);
+			_hmap_photon_pT[i] = new TH1F("PhotonpT","pT_{#gamma}", 200., 0., 100.);
+			_hmap_photon_eta[i] = new TH1F("PhotonEta","#eta_{#gamma}", 100, -2.5, 2.5);
+			_hmap_photon_phi[i] = new TH1F("PhotonPhi","#phi_{#gamma}", 140, -3.5, 3.5);
+		}
 	}
 }
+
+//*********************************************************************************************
+// setBranchAdress: initialization of each object pointer. Also Set branch addresses and branch 
+//                  pointers.
+//*********************************************************************************************
 
 void BSM_Analysis::setBranchAddress(TTree* BOOM)
 {

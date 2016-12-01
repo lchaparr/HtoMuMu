@@ -1,7 +1,7 @@
-////////////////////////////////////////////////////////////////////
-// Developer: Andres Florez, Universidad de los Andes, Colombia. //
-// Developer: Denis Rathjens, University of Hamburg, Germany     //
-//////////////////////////////////////////////////////////////////
+//*************************************************************************//
+// Developer: Luisa Fda Chaparro, Universidad de los Andes, Colombia.      //
+// Code base: Andres Florez, Universidad de los Andes, Colombia.           //
+//*************************************************************************//
 
 
 #ifndef BSM_Analysis_h
@@ -34,12 +34,15 @@ public :
    ~BSM_Analysis();
 
    // create Histo maps
-   void crateHistoMasps(int);
+
    bool passRecoTrigger(string, string); 
    TLorentzVector MuonsVectors(TLorentzVector&, TLorentzVector&);
-   TLorentzVector PhotonsVectors(TLorentzVector&);
    double RelIso(double&, double&);
+   void PhotonsVectors(vector<TLorentzVector>&, TLorentzVector&);
+   TLorentzVector GenleptonVector(TLorentzVector&, TLorentzVector&);
+   void PhotonsGenVectors(vector<TLorentzVector>&, TLorentzVector&);
 
+   void crateHistoMasps(int);
    // Define maps for histograms
    // For muons
    std::map<unsigned int, TH1*> _hmap_lead_muon_pT;
