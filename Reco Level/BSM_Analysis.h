@@ -39,6 +39,7 @@ public :
    TLorentzVector MuonsVectors(TLorentzVector&, TLorentzVector&);
    double RelIso(double&, double&);
    void PhotonsVectors(vector<TLorentzVector>&, TLorentzVector&);
+   void FSRPhotonsVectors(vector<TLorentzVector>&);
    TLorentzVector GenleptonVector(TLorentzVector&, TLorentzVector&);
    void PhotonsGenVectors(vector<TLorentzVector>&, TLorentzVector&);
 
@@ -138,6 +139,20 @@ public :
    vector<float>   *Photon_PFNeuIso;
    vector<int>     *Photon_EleVeto;
    
+   
+   vector<float>  *FSRPhoton_pt;
+   vector<float>  *FSRPhoton_eta;
+   vector<float>  *FSRPhoton_phi;
+   vector<float>  *FSRPhoton_energy;
+   vector<float>  *FSRPhoton_pX;
+   vector<float>  *FSRPhoton_pY;
+   vector<float>  *FSRPhoton_pZ;
+   vector<float>  *FSRPhoton_isoNH;
+   vector<float>  *FSRPhoton_isoCH;
+   vector<float>  *FSRPhoton_isoCHPU;
+   vector<float>  *FSRPhoton_isoPhot;
+   vector<float>  *FSRPhoton_et;
+   
    vector<double>  *Jet_pt;
    vector<double>  *Jet_eta;
    vector<double>  *Jet_phi;
@@ -234,6 +249,19 @@ public :
    TBranch        *b_Photon_PFPhoIso;
    TBranch        *b_Photon_PFNeuIso;
    TBranch        *b_Photon_EleVeto;
+   
+   TBranch 		  *b_FSRPhoton_pt;
+   TBranch  	  *b_FSRPhoton_eta;
+   TBranch  	  *b_FSRPhoton_phi;
+   TBranch  	  *b_FSRPhoton_energy;
+   TBranch  	  *b_FSRPhoton_pX;
+   TBranch  	  *b_FSRPhoton_pY;
+   TBranch  	  *b_FSRPhoton_pZ;
+   TBranch  	  *b_FSRPhoton_isoNH;
+   TBranch  	  *b_FSRPhoton_isoCH;
+   TBranch  	  *b_FSRPhoton_isoCHPU;
+   TBranch  	  *b_FSRPhoton_isoPhot;
+   TBranch  	  *b_FSRPhoton_et;
    
    TBranch        *b_Jet_pt;   //!
    TBranch        *b_Jet_eta;   //!

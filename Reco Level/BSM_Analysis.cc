@@ -8,17 +8,19 @@
 string myTrigger1 = "HLT_IsoMu24_v";
 string myTrigger2 = "HLT_IsoMu24_eta2p1_v";
 
+//string myTrigger1 = "HLT_Mu30_TkMu11_v";
+//string myTrigger2 = "HLT_Mu30_TkMu11_v";
+
 int main (int argc, char *argv[])
 {
 	//-----------------------histogram folders--------------------------
 	TFile * MassHisto = new TFile(argv[2], "RECREATE");
-	int nDir = 5;
+	int nDir = 3;
 	TDirectory *theDirectory[nDir];
 	theDirectory[0] = MassHisto->mkdir("AfterDimuonSel");
 	theDirectory[1] = MassHisto->mkdir("AfterDimuonCommonSel");
-	theDirectory[2] = MassHisto->mkdir("AfterPhotonSel");
-	theDirectory[3] = MassHisto->mkdir("AfterDimuonGenSel");
-	theDirectory[4] = MassHisto->mkdir("AfterGenPhotonSel");
+	theDirectory[2] = MassHisto->mkdir("AfterFSRPhotonSel");
+	
 	cout <<argv[1]<<endl;
 	BSM_Analysis BSM_Analysis_(MassHisto, theDirectory, nDir, argv[1]);	
 }
@@ -55,6 +57,7 @@ BSM_Analysis::BSM_Analysis(TFile* theFile, TDirectory *cdDir[], int nDir, char* 
 	int trigger_evt = 0;
 	int dimuon_evt = 0;
 	int dimuon_initialsel_evt = 0;
+	int fsr_photons = 0;
 	/*int match_evt = 0;
 	int dimuon_match_evt = 0;
 	
@@ -91,6 +94,11 @@ BSM_Analysis::BSM_Analysis(TFile* theFile, TDirectory *cdDir[], int nDir, char* 
 		
 		vector<TLorentzVector> Photon_vec;
 		Photon_vec.erase (Photon_vec.begin(),Photon_vec.end());
+		
+		TLorentzVector FSR_Photon_TL(0., 0., 0., 0.);
+		
+		vector<TLorentzVector> FSRPhoton_vec;
+		FSRPhoton_vec.erase (FSRPhoton_vec.begin(),FSRPhoton_vec.end());
 		
 		TLorentzVector Photon_Gen_TL(0., 0., 0., 0.);
 		
@@ -129,41 +137,40 @@ BSM_Analysis::BSM_Analysis(TFile* theFile, TDirectory *cdDir[], int nDir, char* 
 			{
 				if(Reco_lepton2.Pt()>10 && abs(Reco_lepton2.Eta())<2.4)
 				{
+					/*pass_h2mu_id[1] = 1;
+					dimuon_initialsel_evt++;
+					pass_dimuon = true;*/
 					RelIso(RelIso1,RelIso2);
 					if(RelIso1 <0.1 && RelIso2 <0.1)
 					{
-					pass_h2mu_id[1] = 1;
-					dimuon_initialsel_evt++;	
+						pass_h2mu_id[1] = 1;
+						dimuon_initialsel_evt++;
+						pass_dimuon = true;	
 					}
 				}
 			}
 		}
 
 
-		PhotonsVectors(Photon_vec, Photon_TL);
-		if(Photon_vec.size()>0)
+		FSRPhotonsVectors(FSRPhoton_vec);
+		if(FSRPhoton_vec.size()>0 && pass_dimuon)
 		{
-			pass_h2mu_id[2] = 1;
+			for(int pf =0; pf < FSRPhoton_pt->size(); pf++)
+			{
+				FSR_Photon_TL= FSRPhoton_vec[pf];
+				if(FSR_Photon_TL.Pt()>2.0)
+				{
+					pass_h2mu_id[2] = 1;
+					fsr_photons++;
+				}	
+			}
 		}
 			
-		
-		//--------------------- Gen Level --------------------------------
-		GenleptonVector(Gen_lepton1_vec, Gen_lepton2_vec);
-		if((Gen_lepton1_vec + Gen_lepton2_vec).M()!=0.)
-		{
-			pass_h2mu_id[3] = 1;
-		}
-		
-		PhotonsGenVectors(Photon_Gen_vec, Photon_Gen_TL);
-		if(Photon_Gen_vec.size()>0)
-		{
-			pass_h2mu_id[4] = 1;
-		}
 		
 		//----------------------Fill the histograms-----------------------
 		for (int i = 0; i < nDir; i++)
 		{
-			if (pass_h2mu_id[i] == 1 && i!= 2 && i!=3 && i!=4)
+			if (pass_h2mu_id[i] == 1 && i!= 2)
 			{			
 				_hmap_diMuon_mass[i]->Fill((Reco_lepton1 + Reco_lepton2).M(),pu_weight);
 				_hmap_lead_muon_pT[i]->Fill(Reco_lepton1.Pt(),pu_weight);
@@ -175,27 +182,10 @@ BSM_Analysis::BSM_Analysis(TFile* theFile, TDirectory *cdDir[], int nDir, char* 
 			}
 			else if(pass_h2mu_id[i] == 1 && i == 2)
 			{
-				_hmap_photon_E[i]->Fill(Photon_TL.E(),pu_weight);
-				_hmap_photon_pT[i]->Fill(Photon_TL.Pt(),pu_weight);
-				_hmap_photon_eta[i]->Fill(Photon_TL.Eta(),pu_weight);
-				_hmap_photon_phi[i]->Fill(Photon_TL.Phi(),pu_weight);
-			}
-			else if (pass_h2mu_id[i] == 1 && i == 3)
-			{
-				_hmap_diMuon_mass[i]->Fill((Gen_lepton1_vec + Gen_lepton2_vec).M(),pu_weight);
-				_hmap_lead_muon_pT[i]->Fill(Gen_lepton1_vec.Pt(),pu_weight);
-				_hmap_slead_muon_pT[i]->Fill(Gen_lepton2_vec.Pt(),pu_weight);
-				_hmap_lead_muon_eta[i]->Fill(Gen_lepton1_vec.Eta(),pu_weight);
-				_hmap_slead_muon_eta[i]->Fill(Gen_lepton2_vec.Eta(),pu_weight);
-				_hmap_lead_muon_phi[i]->Fill(Gen_lepton1_vec.Phi(),pu_weight);
-				_hmap_slead_muon_phi[i]->Fill(Gen_lepton2_vec.Phi(),pu_weight);
-			}			   
-			else if(pass_h2mu_id[i] == 1 && i == 4)
-			{
-				_hmap_photon_E[i]->Fill(Photon_Gen_TL.E(),pu_weight);
-				_hmap_photon_pT[i]->Fill(Photon_Gen_TL.Pt(),pu_weight);
-				_hmap_photon_eta[i]->Fill(Photon_Gen_TL.Eta(),pu_weight);
-				_hmap_photon_phi[i]->Fill(Photon_Gen_TL.Phi(),pu_weight);
+				_hmap_photon_E[i]->Fill(FSR_Photon_TL.E(),pu_weight);
+				_hmap_photon_pT[i]->Fill(FSR_Photon_TL.Pt(),pu_weight);
+				_hmap_photon_eta[i]->Fill(FSR_Photon_TL.Eta(),pu_weight);
+				_hmap_photon_phi[i]->Fill(FSR_Photon_TL.Phi(),pu_weight);
 			}
 		}
 	}
@@ -205,6 +195,7 @@ BSM_Analysis::BSM_Analysis(TFile* theFile, TDirectory *cdDir[], int nDir, char* 
 	cout<<"Events that pass the dimuon selection:     "<<dimuon_evt<<endl;
 	cout<<"Events that pass the common selection (pt, eta and RelIso):     "<<dimuon_initialsel_evt<<endl;
 	cout<<"==============================="<<endl;
+	cout<<"FSR Photons:      "<<fsr_photons<<endl;
 	/*cout<<"events that pass match and dimuon selection:  "<<dimuon_match_evt<<endl;
 	cout<<"Events that pass the Muon ID(match+dimuon):    "<<tight_id_evt<<endl;
 	cout<<"Events that pass the Isolation(MuonId+match+dimuon):     "<<Isolation_evt<<endl;
@@ -219,7 +210,7 @@ BSM_Analysis::BSM_Analysis(TFile* theFile, TDirectory *cdDir[], int nDir, char* 
 	for (int d = 0; d < nDir; d++)
 	{
 		cdDir[d]->cd();	
-		if(d!=2 && d!=4)
+		if(d!=2)
 		{
 			_hmap_diMuon_mass[d]->Write();
 			_hmap_lead_muon_pT[d]->Write();
@@ -229,7 +220,7 @@ BSM_Analysis::BSM_Analysis(TFile* theFile, TDirectory *cdDir[], int nDir, char* 
 			_hmap_lead_muon_phi[d]->Write();
 			_hmap_slead_muon_phi[d]->Write();	
 		}
-		else if(d == 2 || d == 4)
+		else if(d == 2)
 		{
 			_hmap_photon_E[d]->Write();
 			_hmap_photon_pT[d]->Write();
@@ -352,6 +343,24 @@ void BSM_Analysis::PhotonsVectors(vector<TLorentzVector>& Photon_vec, TLorentzVe
 
 
 //*********************************************************************************************
+// FSRPhotonsVectors: this function gives the vector that contains all the vectors of the FSR
+// 					photons produced in each event
+//*********************************************************************************************
+void BSM_Analysis::FSRPhotonsVectors(vector<TLorentzVector>& FSRPhoton_vec)
+{
+	
+	TLorentzVector FSRPhoton_TL(0., 0., 0., 0.); 
+	for(int ph = 0; ph < FSRPhoton_pt->size(); ph++)
+	{
+		if(FSRPhoton_pt->size()>0)
+		{
+			FSRPhoton_TL.SetPtEtaPhiE(FSRPhoton_pt->at(ph), FSRPhoton_eta->at(ph), FSRPhoton_phi->at(ph), FSRPhoton_energy->at(ph));	
+			FSRPhoton_vec.push_back(FSRPhoton_TL);
+		}		
+	}
+}
+
+//*********************************************************************************************
 // GenleptonVectors: this function gives the vector for each generated lepton
 //*********************************************************************************************
 TLorentzVector BSM_Analysis::GenleptonVector(TLorentzVector& Gen_lepton1_vec, TLorentzVector& Gen_lepton2_vec)
@@ -416,7 +425,7 @@ void BSM_Analysis::crateHistoMasps (int directories)
 	for (int i = 0; i < directories; i++)
 	{
 		// Muon distributions
-		if(i!=2 && i!=4)
+		if(i!=2)
 		{	
 			_hmap_diMuon_mass[i]      = new TH1F("diMuonMass",      "m_{#mu, #mu}", 600., 0., 300.);
 			_hmap_lead_muon_pT[i]     = new TH1F("lead_muon_pT",    "#mu p_{T}",    600, 0., 300.);
@@ -427,7 +436,7 @@ void BSM_Analysis::crateHistoMasps (int directories)
 			_hmap_slead_muon_phi[i]    = new TH1F("slead_muon_phi", "#mu #phi",     140, -3.5, 3.5);    
 
 		}
-		else if(i == 2 || i == 4)
+		else if(i == 2)
 		{
 			_hmap_photon_E[i] = new TH1F("PhotonEnergy","E_{#gamma}", 200., 0., 100.);
 			_hmap_photon_pT[i] = new TH1F("PhotonpT","pT_{#gamma}", 200., 0., 100.);
@@ -500,6 +509,19 @@ void BSM_Analysis::setBranchAddress(TTree* BOOM)
 	Photon_PFPhoIso = 0;
 	Photon_PFNeuIso = 0;
 	Photon_EleVeto = 0;
+	
+    FSRPhoton_pt = 0;
+    FSRPhoton_eta = 0;
+    FSRPhoton_phi = 0;
+    FSRPhoton_energy = 0;
+    FSRPhoton_pX = 0;
+    FSRPhoton_pY = 0;
+    FSRPhoton_pZ = 0;
+    FSRPhoton_isoNH = 0;
+    FSRPhoton_isoCH = 0;
+    FSRPhoton_isoCHPU = 0;
+    FSRPhoton_isoPhot = 0;
+    FSRPhoton_et = 0;
 	
 	Jet_pt = 0;
 	Jet_eta = 0;
@@ -590,6 +612,19 @@ void BSM_Analysis::setBranchAddress(TTree* BOOM)
 	BOOM->SetBranchAddress("Photon_PFNeuIso", &Photon_PFNeuIso, &b_Photon_PFNeuIso);
 	BOOM->SetBranchAddress("Photon_EleVeto", &Photon_EleVeto, &b_Photon_EleVeto);
 	
+   BOOM->SetBranchAddress("FSRPhoton_pt", &FSRPhoton_pt, &b_FSRPhoton_pt);
+   BOOM->SetBranchAddress("FSRPhoton_eta", &FSRPhoton_eta, &b_FSRPhoton_eta);
+   BOOM->SetBranchAddress("FSRPhoton_phi", &FSRPhoton_phi, &b_FSRPhoton_phi);
+   BOOM->SetBranchAddress("FSRPhoton_energy", &FSRPhoton_energy, &b_FSRPhoton_energy);
+   BOOM->SetBranchAddress("FSRPhoton_pX", &FSRPhoton_pX, &b_FSRPhoton_pX);
+   BOOM->SetBranchAddress("FSRPhoton_pY", &FSRPhoton_pY, &b_FSRPhoton_pY);
+   BOOM->SetBranchAddress("FSRPhoton_pZ", &FSRPhoton_pZ, &b_FSRPhoton_pZ);
+   BOOM->SetBranchAddress("FSRPhoton_isoNH", &FSRPhoton_isoNH, &b_FSRPhoton_isoNH);
+   BOOM->SetBranchAddress("FSRPhoton_isoCH", &FSRPhoton_isoCH, &b_FSRPhoton_isoCH);
+   BOOM->SetBranchAddress("FSRPhoton_isoCHPU", &FSRPhoton_isoCHPU, &b_FSRPhoton_isoCHPU);
+   BOOM->SetBranchAddress("FSRPhoton_isoPhot", &FSRPhoton_isoPhot, &b_FSRPhoton_isoPhot);
+   BOOM->SetBranchAddress("FSRPhoton_et", &FSRPhoton_et, &b_FSRPhoton_et);
+	   
 	BOOM->SetBranchAddress("Jet_pt", &Jet_pt, &b_Jet_pt);
 	BOOM->SetBranchAddress("Jet_eta", &Jet_eta, &b_Jet_eta);
 	BOOM->SetBranchAddress("Jet_phi", &Jet_phi, &b_Jet_phi);
