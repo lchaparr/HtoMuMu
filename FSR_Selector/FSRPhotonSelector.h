@@ -107,7 +107,8 @@ private:
 	vector<float> FSRPhoton_pt , FSRPhoton_eta, FSRPhoton_phi, FSRPhoton_energy;
 	vector<float> FSRPhoton_pX, FSRPhoton_pY, FSRPhoton_pZ;
 	vector<float>  FSRPhoton_isoNH, FSRPhoton_isoCH, FSRPhoton_isoCHPU, FSRPhoton_isoPhot;
-	vector<float> FSRPhoton_et;//, FSRPhoton_HoverE, FSRPhoton_phoR9, FSRPhoton_SigmaIEtaIEta;
+	vector<float> FSRPhoton_isoNHPhot;
+      	vector<float> FSRPhoton_et;//, FSRPhoton_HoverE, FSRPhoton_phoR9, FSRPhoton_SigmaIEtaIEta;
 	//vector<float> FSRPhoton_SigmaIPhiIPhi, FSRPhoton_PFChIso, FSRPhoton_PFPhoIso, FSRPhoton_PFNeuIso;
 	//vector<int>   FSRPhoton_EleVeto, FSRPhoton_hasPixelSeed;
  

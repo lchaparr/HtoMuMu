@@ -48,7 +48,8 @@ void FSRPhotonSelector::Fill(const edm::Event& iEvent){
 	  FSRPhoton_isoCH.push_back(ph->userFloat("fsrPhotonPFIsoChHad03pt02"));
 	  FSRPhoton_isoCHPU.push_back(ph->userFloat("fsrPhotonPFIsoChHadPU03pt02"));
 	  FSRPhoton_isoPhot.push_back(ph->userFloat("fsrPhotonPFIsoPhoton03"));
-    }
+  	  FSRPhoton_isoNHPhot.push_back(ph->userFloat("fsrPhotonPFIsoNHadPhoton03"));
+     }
   }
 }
 
@@ -77,6 +78,7 @@ void FSRPhotonSelector::SetBranches(){
   AddBranch(&FSRPhoton_isoCH		  ,"FSRPhoton_isoCH");
   AddBranch(&FSRPhoton_isoCHPU		  ,"FSRPhoton_isoCHPU");
   AddBranch(&FSRPhoton_isoPhot		  ,"FSRPhoton_isoPhot");
+  AddBranch(&FSRPhoton_isoNHPhot	  ,"FSRPhoton_isoNHPhot");
 
   if(debug_) std::cout << "     FSRPhotonSelector: Finished setting branches." << std::endl;
 }
@@ -105,4 +107,6 @@ void FSRPhotonSelector::Clear(){
   FSRPhoton_isoCH.clear();
   FSRPhoton_isoCHPU.clear();
   FSRPhoton_isoPhot.clear();
+  FSRPhoton_isoNHPhot.clear();
 }
+
