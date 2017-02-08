@@ -38,44 +38,16 @@ class BSM_Analysis {
 	// create Histo maps
 
 	bool passRecoTrigger(string, string); 
-	TLorentzVector MuonsVectors(TLorentzVector&, TLorentzVector&);
-	double RelIso(double&, double&);
+	void MuonsVectors(TLorentzVector&, TLorentzVector&);
+	void RelIso(double&, double&);
 	void PhotonsVectors(vector<TLorentzVector>&);
-	TLorentzVector GenleptonVector(TLorentzVector&, TLorentzVector&);
+	void GenleptonVector(TLorentzVector&, TLorentzVector&);
 	void PhotonsGenVectors(vector<TLorentzVector>&, TLorentzVector&);
 	double FSRdeltaR(TLorentzVector&, TLorentzVector&); 
 	double FSRDROverET2(TLorentzVector&, double);
 	bool BestFSRPhoton(double);
-	void FillPhotonHist(int, TLorentzVector&, TLorentzVector&, double); 
-	void FillMuonsHist(int, TLorentzVector&, TLorentzVector&, double);
-	void FillHiggsHist(int, TLorentzVector&, double);
-	void FillHiggsHist(int, TLorentzVector&, TLorentzVector&, double);
-	void FillHiggsHist(int, TLorentzVector&, TLorentzVector&, TLorentzVector&, double);
-	void crateHistoMasps(int);
-	// Define maps for histograms
-	// For muons
-	std::map<unsigned int, TH1*> _hmap_lead_muon_pT;
-	std::map<unsigned int, TH1*> _hmap_slead_muon_pT;
-	std::map<unsigned int, TH1*> _hmap_lead_muon_eta;
-	std::map<unsigned int, TH1*> _hmap_slead_muon_eta;
-	std::map<unsigned int, TH1*> _hmap_lead_muon_phi;
-	std::map<unsigned int, TH1*> _hmap_slead_muon_phi;
 
-	std::map<unsigned int, TH1*> _hmap_diMuon_mass;
-	std::map<unsigned int, TH1*> _hmap_diMuon_pT;	
-	std::map<unsigned int, TH1*> _hmap_diMuon_eta; 
-	std::map<unsigned int, TH1*> _hmap_diMuon_phi; 
-   
-	// For Photons
- 
-	std::map<unsigned int, TH1*> _hmap_photon1_E;
-	std::map<unsigned int, TH1*> _hmap_photon1_pT;
-	std::map<unsigned int, TH1*> _hmap_photon1_eta;
-	std::map<unsigned int, TH1*> _hmap_photon1_phi;
-	std::map<unsigned int, TH1*> _hmap_photon2_E;
-	std::map<unsigned int, TH1*> _hmap_photon2_pT;
-	std::map<unsigned int, TH1*> _hmap_photon2_eta;
-	std::map<unsigned int, TH1*> _hmap_photon2_phi;
+	// Define maps for histograms
 	
 
 
