@@ -19,107 +19,22 @@ bool data = false;
 
 int main(int argc, char *argv[])
 {
-	//-----------------------histogram folders--------------------------
-
-	//  if (argv[3] == std::string("GF"))
-	// {
-	//	theDirectory[3] = MassHisto->mkdir("BB_GFTight");
-	//	 theDirectory[4] = MassHisto->mkdir("BEBO_GFTight");
-	//	 theDirectory[5] = MassHisto->mkdir("EEOO_GFTight");
-	//	 theDirectory[6] = MassHisto->mkdir("BB_GFLoose");
-	//	 theDirectory[7] = MassHisto->mkdir("BEBO_GFLoose");
-	//	 theDirectory[8] = MassHisto->mkdir("EEOO_GFLoose");
-	//	 theDirectory[9] = MassHisto->mkdir("2Jet_GF");
-	//	 theDirectory[10] = MassHisto->mkdir("BB_GFTight_FSR");
-	//	 theDirectory[11] = MassHisto->mkdir("BEBO_GFTight_FSR");
-	//	 theDirectory[12] = MassHisto->mkdir("EEOO_GFTight_FSR");
-	//	 theDirectory[13] = MassHisto->mkdir("BB_GFLoose_FSR");
-	//	 theDirectory[14] = MassHisto->mkdir("BEBO_GFLoose_FSR");
-	//	 theDirectory[15] = MassHisto->mkdir("EEOO_GFLoose_FSR");
-	//	 theDirectory[16] = MassHisto->mkdir("2Jet_GF_FSR");
-	// }
-
 	cout << argv[1] << endl;
 	BSM_Analysis BSM_Analysis_(NULL, NULL, 0, argv[1], argv[3]);
 }
 
 BSM_Analysis::BSM_Analysis(TFile* theFile, TDirectory *cdDir[], int nDir, char* fname, char* dataType)
 {
-	HistogramManager histos("H2Mu.root");
-	string strAfterDimuonSelection = "AfterDimuonSelection";
-	string strAfterDimuonRelIso = "AfterDimuonRelIso";
-	string strRelIso = "RelIso";
-	string strNonRelIso = "NonRelIso";
-	string strAllEvents = "AllEvents"; //all the selected events, including rel iso and no rel iso.
-	string strFSREvents = "/FSREvents";
-	string strNOFSREvents = "/NOFSREvents";
-	string strtest = "testDirectory";
-
-	string tagOnlyDimuon = "/OnlyDimuon";
-	string tagDimuonPlusPH = "/DimuonPlusPH";
-	string tagAll = "/All"; //All events for this category
-	string tagAllNORelIsoNOFFSR = "/AllNORelIsoNOFFSR";
-	string tagPhotons = "/Photons";
-	string tagOneFSRPhoton = "/OneFSRPhoton";
-	string tagTwoFSRPhoton = "/TwoFSRPhoton";
-	string tagNoFSRPhoton = "/NoFSRPhoton";
-	string tagothers = "/others";
-	string tag = "All ";
-	string tagPH = "All Photons";
-	string tags = "OnlyDimuon DimuonPlusPH";
-
-	histos.createMuonHistograms(strAfterDimuonSelection);
-	histos.createMuonHistograms(strAfterDimuonRelIso);
-	histos.createDimuonHistograms(strAllEvents, tag);
-	histos.createDimuonHistograms(strAllEvents + tagAllNORelIsoNOFFSR);
-	histos.createDimuonHistograms(strRelIso + strFSREvents, tags);
-	histos.createDimuonHistograms(strRelIso + strNOFSREvents, tags);
-	histos.createDimuonHistograms(strRelIso, tag);
-	histos.createDimuonHistograms(strNonRelIso + strNOFSREvents, tags);
-	histos.createDimuonHistograms(strNonRelIso + strFSREvents, tags);
-	histos.createDimuonHistograms(strNonRelIso, tagPH);
-	histos.createPhotonHistograms(strNonRelIso + tagPhotons);
-	histos.createDimuonHistograms(strtest+tagOneFSRPhoton, tags);
-	histos.createDimuonHistograms(strtest+tagTwoFSRPhoton, tags);
-	histos.createDimuonHistograms(strtest+tagNoFSRPhoton, tags);
-
-	string strDelta1 = "Delta1";
-	string strDelta2 = "Delta2";
-	histos.addHistogram(strNonRelIso + tagPhotons, strDelta1, "#Delta_{#gamma, l1}", 100, 0, 2);
-	histos.addHistogram(strNonRelIso + tagPhotons, strDelta2, "#Delta_{#gamma, l2}", 100, 0, 2);
-
-	string strIsolation1 = "Isolation1";
-	string strIsolation2 = "Isolation2";
-	histos.addHistogram(strtest + tagothers, strIsolation1, "RelIso1", 100, 0, 2);
-	histos.addHistogram(strtest + tagothers, strIsolation2, "RelIso2", 100, 0, 2);
-
-	histos.addHistogram(strtest + tagothers, "FSRperEvent", "FSRperEvent", 10, 0, 10);
-	histos.addHistogram(strtest + tagNoFSRPhoton, "PtDimuon", "#P_{T(ll)}", 100, 0, 100);
-
-	histos.addHistogram(strtest + tagOneFSRPhoton, "DeltaDimuonPH", "#Delta_{#gamma,ll}", 100, 0, 2);
-	histos.addHistogram(strtest + tagOneFSRPhoton, strIsolation1, "RelIso1", 100, 0, 2);
-	histos.addHistogram(strtest + tagOneFSRPhoton, strIsolation2, "RelIso2", 100, 0, 2);
-	histos.addHistogram(strtest + tagOneFSRPhoton, "PtDimuon", "#P_{T(ll)}", 100, 0, 100);
-	histos.addHistogram(strtest + tagOneFSRPhoton, "PtDimuonPH", "#P_{T(#gammall)}", 100, 0, 100);
-	histos.addHistogram(strtest + tagOneFSRPhoton, "PtPH", "#P_{T(#gamma)}", 100, 0, 100);
-
-	histos.addHistogram(strtest + tagTwoFSRPhoton, "DeltaDimuonPH1", "#Delta_{#gamma,ll}", 100, 0, 2);
-	histos.addHistogram(strtest + tagTwoFSRPhoton, "DeltaDimuonPH2", "#Delta_{#gamma,ll}", 100, 0, 2);
-	histos.addHistogram(strtest + tagTwoFSRPhoton, strIsolation1, "RelIso1", 100, 0, 2);
-	histos.addHistogram(strtest + tagTwoFSRPhoton, strIsolation2, "RelIso2", 100, 0, 2);
-	histos.addHistogram(strtest + tagTwoFSRPhoton, "PtDimuon", "#P_{T(ll)}", 100, 0, 100);
-	histos.addHistogram(strtest + tagTwoFSRPhoton, "PtDimuonPH", "#P_{T(#gammall)}", 100, 0, 100);
-	histos.addHistogram(strtest + tagTwoFSRPhoton, "PtPH1", "#P_{T(#gamma)}", 100, 0, 100);
-	histos.addHistogram(strtest + tagTwoFSRPhoton, "PtPH2", "#P_{T(#gamma)}", 100, 0, 100);
-
-
 	if (dataType == std::string("GF"))
 	{
 		Gluon_Fusion = true;
 		cout << "is Gluon Fusion" << endl;
 	}
 	if (dataType == std::string("VBF"))
+	{
 		Vector_Boson = true;
+		cout << "is VBF" << endl;
+	}
 	if (dataType == std::string("WP"))
 		W_PlusH = true;
 	if (dataType == std::string("WM"))
@@ -129,7 +44,100 @@ BSM_Analysis::BSM_Analysis(TFile* theFile, TDirectory *cdDir[], int nDir, char* 
 	if (dataType == std::string("ttH"))
 		ttH = true;
 	if (dataType == std::string("DATA"))
+	{
+		cout << "is data or BKG" << endl;
 		data = true;
+	}
+
+	HistogramManager histos("H2Mu.root");
+	string strAfterDimuonSelection = "AfterDimuonSelection";
+	string strGluonFusion = "GluonFusion";
+	string strGFBBTight = "/GFBBTight";
+	string strGFBEBOTight = "/GFBEBOTight";
+	string strGFEEOOTight = "/GFEEOOTight";
+	string strGFBBLoose = "/GFBBLoose";
+	string strGFBEBOLoose = "/GFBEBOLoose";
+	string strGFEEOOLoose = "/GFEEOOLoose";
+	string strGFTwoJets = "/GFTwoJets";
+	string strVectorBoson = "VectorBoson";
+	string strVBFTight = "/VBFTight";
+	string strVBFLoose = "/VBFLoose";
+	string strAfterDimuonRelIso = "/AfterDimuonRelIso";
+
+	string strRelIso = "/RelIso";
+	string strNonRelIso = "/NonRelIso";
+	string strAllEvents = "/AllEvents"; //all the selected events, including rel iso and no rel iso.
+	string strFSREvents = "/FSREvents";
+	string strNOFSREvents = "/NOFSREvents";
+	string tagOnlyDimuon = "/OnlyDimuon";
+	string tagDimuonPlusPH = "/DimuonPlusPH";
+
+	string tagInvariantMass = "OnlyDimuon DimuonPlusPH";
+	string tagAllEvents = "AllEvents";
+	string tagPhotons = "/Photons";
+
+	string strtest = "testDirectory";
+	string tagothers = "/others";
+
+	histos.createMuonHistograms(strAfterDimuonSelection);
+	if (Gluon_Fusion || data)
+	{
+		histos.createMuonHistograms(strGluonFusion + strAfterDimuonRelIso);
+		histos.createDimuonHistograms(strGluonFusion + strGFBBTight, tagAllEvents);
+		histos.createDimuonHistograms(strGluonFusion + strGFBBTight + strRelIso + strNOFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strGluonFusion + strGFBBTight + strRelIso + strFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strGluonFusion + strGFBBTight + strNonRelIso + strNOFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strGluonFusion + strGFBBTight + strNonRelIso + strFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strGluonFusion + strGFBEBOTight, tagAllEvents);
+		histos.createDimuonHistograms(strGluonFusion + strGFBEBOTight + strRelIso + strNOFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strGluonFusion + strGFBEBOTight + strRelIso + strFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strGluonFusion + strGFBEBOTight + strNonRelIso + strNOFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strGluonFusion + strGFBEBOTight + strNonRelIso + strFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strGluonFusion + strGFEEOOTight, tagAllEvents);
+		histos.createDimuonHistograms(strGluonFusion + strGFEEOOTight + strRelIso + strNOFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strGluonFusion + strGFEEOOTight + strRelIso + strFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strGluonFusion + strGFEEOOTight + strNonRelIso + strNOFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strGluonFusion + strGFEEOOTight + strNonRelIso + strFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strGluonFusion + strGFBBLoose, tagAllEvents);
+		histos.createDimuonHistograms(strGluonFusion + strGFBBLoose + strRelIso + strNOFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strGluonFusion + strGFBBLoose + strRelIso + strFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strGluonFusion + strGFBBLoose + strNonRelIso + strNOFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strGluonFusion + strGFBBLoose + strNonRelIso + strFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strGluonFusion + strGFBEBOLoose, tagAllEvents);
+		histos.createDimuonHistograms(strGluonFusion + strGFBEBOLoose + strRelIso + strNOFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strGluonFusion + strGFBEBOLoose + strRelIso + strFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strGluonFusion + strGFBEBOLoose + strNonRelIso + strNOFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strGluonFusion + strGFBEBOLoose + strNonRelIso + strFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strGluonFusion + strGFEEOOLoose, tagAllEvents);
+		histos.createDimuonHistograms(strGluonFusion + strGFEEOOLoose + strRelIso + strNOFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strGluonFusion + strGFEEOOLoose + strRelIso + strFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strGluonFusion + strGFEEOOLoose + strNonRelIso + strNOFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strGluonFusion + strGFEEOOLoose + strNonRelIso + strFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strGluonFusion + strGFTwoJets, tagAllEvents);
+		histos.createDimuonHistograms(strGluonFusion + strGFTwoJets + strRelIso + strNOFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strGluonFusion + strGFTwoJets + strRelIso + strFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strGluonFusion + strGFTwoJets + strNonRelIso + strNOFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strGluonFusion + strGFTwoJets + strNonRelIso + strFSREvents, tagInvariantMass);
+	}
+	if (Vector_Boson || data)
+	{
+		histos.createMuonHistograms(strVectorBoson + strAfterDimuonRelIso);
+		histos.createDimuonHistograms(strVectorBoson + strVBFTight, tagAllEvents);
+		histos.createDimuonHistograms(strVectorBoson + strVBFTight + strRelIso + strNOFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strVectorBoson + strVBFTight + strRelIso + strFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strVectorBoson + strVBFTight + strNonRelIso + strNOFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strVectorBoson + strVBFTight + strNonRelIso + strFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strVectorBoson + strVBFLoose, tagAllEvents);
+		histos.createDimuonHistograms(strVectorBoson + strVBFLoose + strRelIso + strNOFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strVectorBoson + strVBFLoose + strRelIso + strFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strVectorBoson + strVBFLoose + strNonRelIso + strNOFSREvents, tagInvariantMass);
+		histos.createDimuonHistograms(strVectorBoson + strVBFLoose + strNonRelIso + strFSREvents, tagInvariantMass);
+	}
+
+	string strIsolation1 = "Isolation1";
+	string strIsolation2 = "Isolation2";
+	histos.addHistogram(strtest + tagothers, strIsolation1, "RelIso1", 100, 0, 2);
+	histos.addHistogram(strtest + tagothers, strIsolation2, "RelIso2", 100, 0, 2);
 
 	//-----------------------load PU weights----------------------------
 
@@ -139,7 +147,6 @@ BSM_Analysis::BSM_Analysis(TFile* theFile, TDirectory *cdDir[], int nDir, char* 
 	TFile file_PUsim("PU2016MC.root", "read");
 	TH1F *PUsim = (TH1F*) file_PUsim.Get("analyzeHiMassTau/NVertices_0");
 	PUsim->Scale(1 / PUsim->Integral());
-
 	PUweights->Divide(PUsim);
 
 	//----------------------configure input file--------------------------
@@ -153,26 +160,35 @@ BSM_Analysis::BSM_Analysis(TFile* theFile, TDirectory *cdDir[], int nDir, char* 
 	cout << "No. of entries in the sample:  " << nentries << endl;
 	//int prueba = 100;
 
-	//---------------------counters---------------------------------------
+	//-------------------General counters---------------------------------------
 
-	int trigger_evt = 0, dimuon_evt = 0, dimuon_initialsel_evt = 0, dimuon_RelIsosel_evt = 0, dimuon_NORelIsosel_evt = 0;
-	int fsr_photons = 0, fsr_photonstolep1 = 0, fsr_photonstolep2 = 0, fsr_photonstolep1iso = 0, fsr_photonstolep2iso = 0;
-	int fsr_photonstoleptons = 0, fsr_all = 0, fsr_all_iso = 0, fsr_photonstolep_both = 0, fsr_photonstolepiso_both = 0;
+	int trigger_evt = 0, dimuon_evt = 0, dimuon_initialsel_evt = 0, dimuon_passRelIso = 0;
+	int AllFSRPhotons = 0;
+	int fsr_photons = 0;
 	int BothNoreliso = 0, OneNoreliso = 0, RelIsoReal = 0;
-	int PassRelisoNoFSR = 0, AllRelIso = 0;
+	int PassRelisoNoFSR = 0;
 
-	/*int BB_GF_tight_evt = 0, BB_GF_tight_FSR_evt = 0, BEBO_GF_tight_evt = 0, BEBO_GF_tight_FSR_evt = 0,
-	 EEOO_GF_tight_evt = 0, EEOO_GF_tight_FSR_evt = 0;
-	 int BB_GF_loose_evt = 0, BB_GF_loose_FSR_evt = 0, BEBO_GF_loose_evt = 0, BEBO_GF_loose_FSR_evt = 0,
-	 EEOO_GF_loose_evt = 0, EEOO_GF_loose_FSR_evt = 0;
-	 int Twojets_GF = 0, Twojets_GF_FSR = 0;
-	 int FSR_phToLep1_BB_GF_Tight = 0, FSR_phToLep2_BB_GF_Tight = 0, FSR_phToBoth_BB_GF_Tight = 0;
-	 int FSR_phToLep1_BB_GF_Loose = 0, FSR_phToLep2_BB_GF_Loose = 0, FSR_phToBoth_BB_GF_Loose = 0;
-	 int FSR_phToLep1_BEBO_GF_Tight = 0, FSR_phToLep2_BEBO_GF_Tight = 0, FSR_phToBoth_BEBO_GF_Tight = 0;
-	 int FSR_phToLep1_BEBO_GF_Loose = 0, FSR_phToLep2_BEBO_GF_Loose = 0, FSR_phToBoth_BEBO_GF_Loose = 0;
-	 int FSR_phToLep1_EEOO_GF_Tight = 0, FSR_phToLep2_EEOO_GF_Tight = 0, FSR_phToBoth_EEOO_GF_Tight = 0;
-	 int FSR_phToLep1_EEOO_GF_Loose = 0, FSR_phToLep2_EEOO_GF_Loose = 0, FSR_phToBoth_EEOO_GF_Loose = 0;
-	 int FSR_phToLep1_2jets_GF = 0, FSR_phToLep2_2jets_GF = 0, FSR_phToBoth_2jets_GF = 0,*/
+	//·················Gluon Fusion or data counters...........................
+	int GF_BB_Tight_cat = 0, GF_BBTight_Iso = 0, GF_BBTightIso_NOFSR = 0, GF_BBTightIso_OneFSR = 0, GF_BBTightIso_TwoFSR = 0, GF_BBTightNoIso_NOFSR = 0,
+			GF_BBTightNoIso_OneFSR = 0, GF_BBTightNoIso_TwoFSR = 0;
+	int GF_BEBO_Tight_cat = 0, GF_BEBOTight_Iso = 0, GF_BEBOTightIso_NOFSR = 0, GF_BEBOTightIso_OneFSR = 0, GF_BEBOTightIso_TwoFSR = 0,
+			GF_BEBOTightNoIso_NOFSR = 0, GF_BEBOTightNoIso_OneFSR = 0, GF_BEBOTightNoIso_TwoFSR = 0;
+	int GF_EEOO_Tight_cat = 0, GF_EEOOTight_Iso = 0, GF_EEOOTightIso_NOFSR = 0, GF_EEOOTightIso_OneFSR = 0, GF_EEOOTightIso_TwoFSR = 0,
+			GF_EEOOTightNoIso_NOFSR = 0, GF_EEOOTightNoIso_OneFSR = 0, GF_EEOOTightNoIso_TwoFSR = 0;
+	int GF_BB_Loose_cat = 0, GF_BBLoose_Iso = 0, GF_BBLooseIso_NOFSR = 0, GF_BBLooseIso_OneFSR = 0, GF_BBLooseIso_TwoFSR = 0, GF_BBLooseNoIso_NOFSR = 0,
+			GF_BBLooseNoIso_OneFSR = 0, GF_BBLooseNoIso_TwoFSR = 0;
+	int GF_BEBO_Loose_cat = 0, GF_BEBOLoose_Iso = 0, GF_BEBOLooseIso_NOFSR = 0, GF_BEBOLooseIso_OneFSR = 0, GF_BEBOLooseIso_TwoFSR = 0,
+			GF_BEBOLooseNoIso_NOFSR = 0, GF_BEBOLooseNoIso_OneFSR = 0, GF_BEBOLooseNoIso_TwoFSR = 0;
+	int GF_EEOO_Loose_cat = 0, GF_EEOOLoose_Iso = 0, GF_EEOOLooseIso_NOFSR = 0, GF_EEOOLooseIso_OneFSR = 0, GF_EEOOLooseIso_TwoFSR = 0,
+			GF_EEOOLooseNoIso_NOFSR = 0, GF_EEOOLooseNoIso_OneFSR = 0, GF_EEOOLooseNoIso_TwoFSR = 0;
+	int GF_TwoJets_cat = 0, GF_TwoJets_Iso = 0, GF_TwoJetsIso_NOFSR = 0, GF_TwoJetsIso_OneFSR = 0, GF_TwoJetsIso_TwoFSR = 0, GF_TwoJetsNoIso_NOFSR = 0,
+			GF_TwoJetsNoIso_OneFSR = 0, GF_TwoJetsNoIso_TwoFSR = 0;
+
+	//·················Vector_Boson or data counters···························
+	int VBF_Tight_cat = 0, VBF_Tight_Iso = 0, VBF_TightIso_NOFSR = 0, VBF_TightIso_OneFSR = 0, VBF_TightIso_TwoFSR = 0, VBF_TightNoIso_NOFSR = 0,
+			VBF_TightNoIso_OneFSR = 0, VBF_TightNoIso_TwoFSR = 0;
+	int VBF_Loose_cat = 0, VBF_Loose_Iso = 0, VBF_LooseIso_NOFSR = 0, VBF_LooseIso_OneFSR = 0, VBF_LooseIso_TwoFSR = 0, VBF_LooseNoIso_NOFSR = 0,
+			VBF_LooseNoIso_OneFSR = 0, VBF_LooseNoIso_TwoFSR = 0;
 
 	//---------------------Loop over the events----------------------------
 	//for (int i = 0; i < prueba; ++i)
@@ -183,12 +199,9 @@ BSM_Analysis::BSM_Analysis(TFile* theFile, TDirectory *cdDir[], int nDir, char* 
 		double pu_weight = 1.;
 		pu_weight = PUweights->GetBinContent(PUweights->FindBin(ntruePUInteractions));
 		//-------------------------- TLorentz vector -------------------------------
-		TLorentzVector dalitz_first_muon_vec(0., 0., 0., 0.);
-		TLorentzVector dalitz_Subfirst_muon_vec(0., 0., 0., 0.);
 		TLorentzVector Reco_lepton1(0., 0., 0., 0.);
 		TLorentzVector Reco_lepton2(0., 0., 0., 0.);
 		TLorentzVector Dimuon;
-		TLorentzVector Dimuon_nonrel;
 		TLorentzVector Gen_lepton1_vec(0., 0., 0., 0.);
 		TLorentzVector Gen_lepton2_vec(0., 0., 0., 0.);
 		TLorentzVector Photon_TL(0., 0., 0., 0.);
@@ -216,11 +229,10 @@ BSM_Analysis::BSM_Analysis(TFile* theFile, TDirectory *cdDir[], int nDir, char* 
 
 		double RelIso1 = 0, RelIso2 = 0, RelIso_NoFSR1 = 0, RelIso_NoFSR2 = 0;
 		float FSRIso = 0;
-		int FSRperEvent = 0;
+		int VBF_cat = 0, GF_cat = 0;
 
 		//----------------------control booleans------------------------
-		bool lepton1_tight = false, lepton2_tight = false, pass_dimuon = false, gen_events = false;
-		bool pass_match = false, pass_uno_uno = false, pass_uno_dos = false, pass_dimuon_RelIso = false;
+		bool pass_dimuon = false, pass_dimuon_RelIso = false;
 
 		//-------------------For Trigger-------------------------------
 		if (passRecoTrigger(myTrigger1, myTrigger2))
@@ -229,19 +241,88 @@ BSM_Analysis::BSM_Analysis(TFile* theFile, TDirectory *cdDir[], int nDir, char* 
 		//--------------------Dimuons (1st selection)------------------
 		MuonsVectors(Reco_lepton1, Reco_lepton2, RelIso1, RelIso2, RelIso_NoFSR1, RelIso_NoFSR2);
 
-		double DR_FSR_lep1;
-		double DR_FSR_lep2;
-		double DROverET_1;
-		double DROverET_2;
-		double minDrOEt1 = 999.9;
-		double minDrOEt2 = 999.9;
-		bool fsr_photonlep1_match = false, fsr_photonlep2_match = false, fsr_photonlep1_reliso = false;
-		bool fsr_photonlep2_reliso = false, norelisoFSR = false;
+		//--------------------FSR Recovery algorithm---------------------
+		double DR_FSR_lep1, DR_FSR_lep2, DROverET_1, DROverET_2, minDrOEt1 = 999.9, minDrOEt2 = 999.9;
+		bool fsr_photonlep1 = false, fsr_photonlep2 = false;
 
+		for (int ph = 0; ph < FSRPhoton_pt->size(); ph++)
+		{
+			FSR_Photon_TL.SetPtEtaPhiE(FSRPhoton_pt->at(ph), FSRPhoton_eta->at(ph), FSRPhoton_phi->at(ph), FSRPhoton_energy->at(ph));
+			FSRIso = (FSRPhoton_isoCHPU->at(ph) + FSRPhoton_isoNHPhot->at(ph)) / FSRPhoton_pt->at(ph);
+			AllFSRPhotons++;
+			if (FSR_Photon_TL.Pt() > 2.0 && abs(FSR_Photon_TL.Eta()) < 2.4 && FSRIso < 1.8)
+			{
+				fsr_photons++;
+				DR_FSR_lep1 = FSRdeltaR(FSR_Photon_TL, Reco_lepton1);
+				DR_FSR_lep2 = FSRdeltaR(FSR_Photon_TL, Reco_lepton2);
+				DROverET_1 = FSRDROverET2(FSR_Photon_TL, DR_FSR_lep1);
+				DROverET_2 = FSRDROverET2(FSR_Photon_TL, DR_FSR_lep2);
+
+				//For lepton 1 Only;
+				//if (DR_FSR_lep1 >= 0.5 && DROverET_1 < 0.012)
+				if (DROverET_1 < 0.012)
+				{
+					if (FSR_PhotonToLep2 != FSR_Photon_TL)
+					{
+						if (DROverET_1 < minDrOEt1)
+						{
+							minDrOEt1 = DROverET_1;
+							FSR_PhotonToLep1 = FSR_Photon_TL;
+							fsr_photonlep1 = true;
+						}
+					}
+				}
+				//For lepton 2 Only;
+				//if (DR_FSR_lep2 >= 0.5 && DROverET_2 < 0.012)
+				if (DROverET_2 < 0.012)
+				{
+					if (FSR_PhotonToLep1 != FSR_Photon_TL)
+					{
+						if (DROverET_2 < minDrOEt2)
+						{
+							minDrOEt2 = DROverET_1;
+							FSR_PhotonToLep2 = FSR_Photon_TL;
+							fsr_photonlep2 = true;
+						}
+					}
+				}
+			}
+		}
+
+		//---------------------Muons selections--------------------------
 		if ((Reco_lepton1 + Reco_lepton2).M() != 0. && Reco_lepton1.M() != 0 && Reco_lepton2.M() != 0)
 		{
 			Dimuon = Reco_lepton1 + Reco_lepton2;
 			dimuon_evt++;
+			//Only for GF categories or data
+			if (Gluon_Fusion || data)
+			{
+				GF_cat = GFCategories(Reco_lepton1, Reco_lepton2);
+				if (GF_cat == 1)
+					GF_BB_Tight_cat++;
+				if (GF_cat == 2)
+					GF_BEBO_Tight_cat++;
+				if (GF_cat == 3)
+					GF_EEOO_Tight_cat++;
+				if (GF_cat == 4)
+					GF_BB_Loose_cat++;
+				if (GF_cat == 5)
+					GF_BEBO_Loose_cat++;
+				if (GF_cat == 6)
+					GF_EEOO_Loose_cat++;
+				if (GF_cat == 7)
+					GF_TwoJets_cat++;
+			}
+			//Only for VBF or data
+			if (Vector_Boson || data)
+			{
+				VBF_cat = JetsVector(Reco_lepton1, Reco_lepton2);
+				if (VBF_cat == 1)
+					VBF_Tight_cat++;
+				if (VBF_cat == 2)
+					VBF_Loose_cat++;
+			}
+
 			if (Reco_lepton1.Pt() > 26 && abs(Reco_lepton1.Eta()) < 2.4 && passRecoTrigger(myTrigger1, myTrigger2))
 			{
 				if (Reco_lepton2.Pt() > 10 && abs(Reco_lepton2.Eta()) < 2.4)
@@ -250,591 +331,855 @@ BSM_Analysis::BSM_Analysis(TFile* theFile, TDirectory *cdDir[], int nDir, char* 
 					dimuon_initialsel_evt++;
 					pass_dimuon = true;
 
-					//Rel iso ifs.
-					if (RelIso1 > 0.12 && RelIso2 > 0.12)
+					//------------Rel iso Selection-------------------------------------------
+					//------- If the events didn`t pass the rel iso, but pass reliso-gamma----
+					if (RelIso1 >= 0.05 && RelIso2 >= 0.05)
 					{
 						histos.fillHistogram(strtest + tagothers, strIsolation1, RelIso1, pu_weight);
 						histos.fillHistogram(strtest + tagothers, strIsolation2, RelIso2, pu_weight);
 						BothNoreliso++;
-						if (RelIso_NoFSR1 < 0.12 && RelIso_NoFSR2 < 0.12)
+						if (TrackIsoGamma(RelIso1, RelIso2, Reco_lepton1, Reco_lepton2, FSR_PhotonToLep1, FSR_PhotonToLep2))
 						{
 							pass_dimuon_RelIso = true;
 							PassRelisoNoFSR++;
 						}
+						/*if (RelIso_NoFSR1 < 0.25 && RelIso_NoFSR2 < 0.25)
+						 {
+						 pass_dimuon_RelIso = true;
+						 PassRelisoNoFSR++;
+						 }*/
 					}
 
-					if ((RelIso1 > 0.12 && RelIso2 < 0.12) || (RelIso1 < 0.12 && RelIso2 > 0.12))
+					if ((RelIso1 >= 0.05 && RelIso2 < 0.05) || (RelIso1 < 0.05 && RelIso2 >= 0.05))
 					{
-						if (RelIso1 > 0.12)
-							histos.fillHistogram(strtest + tagothers, strIsolation1, RelIso1, pu_weight);
-						if (RelIso2 > 0.12)
-							histos.fillHistogram(strtest + tagothers, strIsolation2, RelIso2, pu_weight);
-						if (RelIso_NoFSR1 < 0.12 && RelIso_NoFSR2 < 0.12)
+						OneNoreliso++;
+						if (TrackIsoGamma(RelIso1, RelIso2, Reco_lepton1, Reco_lepton2, FSR_PhotonToLep1, FSR_PhotonToLep2))
 						{
 							pass_dimuon_RelIso = true;
 							PassRelisoNoFSR++;
 						}
-						OneNoreliso++;
+						/*if (RelIso_NoFSR1 < 0.25 && RelIso_NoFSR2 < 0.25)
+						 {
+						 pass_dimuon_RelIso = true;
+						 PassRelisoNoFSR++;
+						 }*/
 					}
-
-					if (RelIso1 < 0.12 && RelIso2 < 0.12)
+					//-----------If the events pass the rel iso-----------------------------------
+					if (RelIso1 < 0.05 && RelIso2 < 0.05)
 					{
 						RelIsoReal++;
 						pass_dimuon_RelIso = true;
 					}
 
+					//---------------For all the events that pass relIso-----------------------
 					if (pass_dimuon_RelIso)
 					{
-						AllRelIso++;
-						histos.fillMuonHist(strAfterDimuonRelIso, Reco_lepton1, Reco_lepton2, pu_weight);
+						dimuon_passRelIso++;
 
-						//check if maybe exist some FSR event that pass the RelIso
-						for (int ph = 0; ph < FSRPhoton_pt->size(); ph++)
+						if (Gluon_Fusion || data)
 						{
-							FSR_Photon_TL.SetPtEtaPhiE(FSRPhoton_pt->at(ph), FSRPhoton_eta->at(ph), FSRPhoton_phi->at(ph),
-									FSRPhoton_energy->at(ph));
-
-							FSRIso = (FSRPhoton_isoCHPU->at(ph) + FSRPhoton_isoNHPhot->at(ph)) / FSRPhoton_pt->at(ph);
-
-							fsr_all_iso++;
-							if (FSR_Photon_TL.Pt() > 2.0 && abs(FSR_Photon_TL.Eta()) < 2.4 && FSRIso < 1.8)
+							histos.fillMuonHist(strGluonFusion + strAfterDimuonRelIso, Reco_lepton1, Reco_lepton2, pu_weight);
 							{
-								fsr_photons++;
-								FSRperEvent++;
-
-								DR_FSR_lep1 = FSRdeltaR(FSR_Photon_TL, Reco_lepton1);
-								DR_FSR_lep2 = FSRdeltaR(FSR_Photon_TL, Reco_lepton2);
-								DROverET_1 = FSRDROverET2(FSR_Photon_TL, DR_FSR_lep1);
-								DROverET_2 = FSRDROverET2(FSR_Photon_TL, DR_FSR_lep2);
-
-								//For lepton 1 Only;
-								//if (DR_FSR_lep1 >= 0.5 && DROverET_1 < 0.012)
-								if (DROverET_1 < 0.012)
+								if (GF_cat == 1)
 								{
-									if (FSR_PhotonToLep2 != FSR_Photon_TL)
+									GF_BBTight_Iso++;
+									if (abs(125.0 - Dimuon.M()) <= abs(125.0 - (Dimuon + FSR_PhotonToLep1 + FSR_PhotonToLep2).M()))
 									{
-										if (DROverET_1 < minDrOEt1)
+										histos.fillHiggsHist(strGluonFusion + strGFBBTight + strAllEvents, Dimuon, pu_weight);
+										histos.fillHiggsHist(strGluonFusion + strGFBBTight + strRelIso + strNOFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+										histos.fillHiggsHist(strGluonFusion + strGFBBTight + strRelIso + strNOFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+												FSR_PhotonToLep2, pu_weight);
+										GF_BBTightIso_NOFSR++;
+									}
+									else
+									{
+										if (fsr_photonlep1 && !fsr_photonlep2)
 										{
-											minDrOEt1 = DROverET_1;
-											FSR_PhotonToLep1 = FSR_Photon_TL;
-											fsr_photonlep1_reliso = true;
+											histos.fillHiggsHist(strGluonFusion + strGFBBTight + strAllEvents, Dimuon, FSR_PhotonToLep1, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFBBTight + strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFBBTight + strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1, pu_weight);
+											GF_BBTightIso_OneFSR++;
+										}
+										if (fsr_photonlep2 && !fsr_photonlep1)
+										{
+											histos.fillHiggsHist(strGluonFusion + strGFBBTight + strAllEvents, Dimuon, FSR_PhotonToLep2, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFBBTight + strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFBBTight + strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep2, pu_weight);
+											GF_BBTightIso_OneFSR++;
+										}
+										if (fsr_photonlep1 && fsr_photonlep2)
+										{
+											histos.fillHiggsHist(strGluonFusion + strGFBBTight + strAllEvents, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFBBTight + strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFBBTight + strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+													FSR_PhotonToLep2, pu_weight);
+											GF_BBTightIso_TwoFSR++;
 										}
 									}
 								}
-								//For lepton 2 Only;
-								//if (DR_FSR_lep2 >= 0.5 && DROverET_2 < 0.012)
-								if (DROverET_2 < 0.012)
+								if (GF_cat == 2)
 								{
-									if (FSR_PhotonToLep1 != FSR_Photon_TL)
+									GF_BEBOTight_Iso++;
+									if (abs(125.0 - Dimuon.M()) <= abs(125.0 - (Dimuon + FSR_PhotonToLep1 + FSR_PhotonToLep2).M()))
 									{
-										if (DROverET_2 < minDrOEt2)
+										histos.fillHiggsHist(strGluonFusion + strGFBEBOTight + strAllEvents, Dimuon, pu_weight);
+										histos.fillHiggsHist(strGluonFusion + strGFBEBOTight + strRelIso + strNOFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+										histos.fillHiggsHist(strGluonFusion + strGFBEBOTight + strRelIso + strNOFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+												FSR_PhotonToLep2, pu_weight);
+										GF_BEBOTightIso_NOFSR++;
+									}
+									else
+									{
+										if (fsr_photonlep1 && !fsr_photonlep2)
 										{
-											minDrOEt2 = DROverET_1;
-											FSR_PhotonToLep2 = FSR_Photon_TL;
-											fsr_photonlep2_reliso = true;
+											histos.fillHiggsHist(strGluonFusion + strGFBEBOTight + strAllEvents, Dimuon, FSR_PhotonToLep1, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFBEBOTight + strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFBEBOTight + strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1, pu_weight);
+											GF_BEBOTightIso_OneFSR++;
+										}
+										if (fsr_photonlep2 && !fsr_photonlep1)
+										{
+											histos.fillHiggsHist(strGluonFusion + strGFBEBOTight + strAllEvents, Dimuon, FSR_PhotonToLep2, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFBEBOTight + strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFBEBOTight + strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep2, pu_weight);
+											GF_BEBOTightIso_OneFSR++;
+										}
+										if (fsr_photonlep1 && fsr_photonlep2)
+										{
+											histos.fillHiggsHist(strGluonFusion + strGFBEBOTight + strAllEvents, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFBEBOTight + strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFBEBOTight + strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+													FSR_PhotonToLep2, pu_weight);
+											GF_BEBOTightIso_TwoFSR++;
+										}
+									}
+								}
+								if (GF_cat == 3)
+								{
+									GF_EEOOTight_Iso++;
+									if (abs(125.0 - Dimuon.M()) <= abs(125.0 - (Dimuon + FSR_PhotonToLep1 + FSR_PhotonToLep2).M()))
+									{
+										histos.fillHiggsHist(strGluonFusion + strGFEEOOTight + strAllEvents, Dimuon, pu_weight);
+										histos.fillHiggsHist(strGluonFusion + strGFEEOOTight + strRelIso + strNOFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+										histos.fillHiggsHist(strGluonFusion + strGFEEOOTight + strRelIso + strNOFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+												FSR_PhotonToLep2, pu_weight);
+										GF_EEOOTightIso_NOFSR++;
+									}
+									else
+									{
+										if (fsr_photonlep1 && !fsr_photonlep2)
+										{
+											histos.fillHiggsHist(strGluonFusion + strGFEEOOTight + strAllEvents, Dimuon, FSR_PhotonToLep1, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFEEOOTight + strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFEEOOTight + strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1, pu_weight);
+											GF_EEOOTightIso_OneFSR++;
+										}
+										if (fsr_photonlep2 && !fsr_photonlep1)
+										{
+											histos.fillHiggsHist(strGluonFusion + strGFEEOOTight + strAllEvents, Dimuon, FSR_PhotonToLep2, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFEEOOTight + strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFEEOOTight + strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep2, pu_weight);
+											GF_EEOOTightIso_OneFSR++;
+										}
+										if (fsr_photonlep1 && fsr_photonlep2)
+										{
+											histos.fillHiggsHist(strGluonFusion + strGFEEOOTight + strAllEvents, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFEEOOTight + strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFEEOOTight + strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+													FSR_PhotonToLep2, pu_weight);
+											GF_EEOOTightIso_TwoFSR++;
+										}
+									}
+								}
+								if (GF_cat == 4)
+								{
+									GF_BBLoose_Iso++;
+									if (abs(125.0 - Dimuon.M()) <= abs(125.0 - (Dimuon + FSR_PhotonToLep1 + FSR_PhotonToLep2).M()))
+									{
+										histos.fillHiggsHist(strGluonFusion + strGFBBLoose + strAllEvents, Dimuon, pu_weight);
+										histos.fillHiggsHist(strGluonFusion + strGFBBLoose + strRelIso + strNOFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+										histos.fillHiggsHist(strGluonFusion + strGFBBLoose + strRelIso + strNOFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+												FSR_PhotonToLep2, pu_weight);
+										GF_BBLooseIso_NOFSR++;
+									}
+									else
+									{
+										if (fsr_photonlep1 && !fsr_photonlep2)
+										{
+											histos.fillHiggsHist(strGluonFusion + strGFBBLoose + strAllEvents, Dimuon, FSR_PhotonToLep1, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFBBLoose + strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFBBLoose + strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1, pu_weight);
+											GF_BBLooseIso_OneFSR++;
+										}
+										if (fsr_photonlep2 && !fsr_photonlep1)
+										{
+											histos.fillHiggsHist(strGluonFusion + strGFBBLoose + strAllEvents, Dimuon, FSR_PhotonToLep2, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFBBLoose + strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFBBLoose + strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep2, pu_weight);
+											GF_BBLooseIso_OneFSR++;
+										}
+										if (fsr_photonlep1 && fsr_photonlep2)
+										{
+											histos.fillHiggsHist(strGluonFusion + strGFBBLoose + strAllEvents, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFBBLoose + strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFBBLoose + strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+													FSR_PhotonToLep2, pu_weight);
+											GF_BBLooseIso_TwoFSR++;
+										}
+									}
+								}
+								if (GF_cat == 5)
+								{
+									GF_BEBOLoose_Iso++;
+									if (abs(125.0 - Dimuon.M()) <= abs(125.0 - (Dimuon + FSR_PhotonToLep1 + FSR_PhotonToLep2).M()))
+									{
+										histos.fillHiggsHist(strGluonFusion + strGFBEBOLoose + strAllEvents, Dimuon, pu_weight);
+										histos.fillHiggsHist(strGluonFusion + strGFBEBOLoose + strRelIso + strNOFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+										histos.fillHiggsHist(strGluonFusion + strGFBEBOLoose + strRelIso + strNOFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+												FSR_PhotonToLep2, pu_weight);
+										GF_BEBOLooseIso_NOFSR++;
+									}
+									else
+									{
+										if (fsr_photonlep1 && !fsr_photonlep2)
+										{
+											histos.fillHiggsHist(strGluonFusion + strGFBEBOLoose + strAllEvents, Dimuon, FSR_PhotonToLep1, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFBEBOLoose + strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFBEBOLoose + strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1, pu_weight);
+											GF_BEBOLooseIso_OneFSR++;
+										}
+										if (fsr_photonlep2 && !fsr_photonlep1)
+										{
+											histos.fillHiggsHist(strGluonFusion + strGFBEBOLoose + strAllEvents, Dimuon, FSR_PhotonToLep2, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFBEBOLoose + strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFBEBOLoose + strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep2, pu_weight);
+											GF_BEBOLooseIso_OneFSR++;
+										}
+										if (fsr_photonlep1 && fsr_photonlep2)
+										{
+											histos.fillHiggsHist(strGluonFusion + strGFBEBOLoose + strAllEvents, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFBEBOLoose + strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFBEBOLoose + strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+													FSR_PhotonToLep2, pu_weight);
+											GF_BEBOLooseIso_TwoFSR++;
+										}
+									}
+								}
+								if (GF_cat == 6)
+								{
+									GF_EEOOLoose_Iso++;
+									if (abs(125.0 - Dimuon.M()) <= abs(125.0 - (Dimuon + FSR_PhotonToLep1 + FSR_PhotonToLep2).M()))
+									{
+										histos.fillHiggsHist(strGluonFusion + strGFEEOOLoose + strAllEvents, Dimuon, pu_weight);
+										histos.fillHiggsHist(strGluonFusion + strGFEEOOLoose + strRelIso + strNOFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+										histos.fillHiggsHist(strGluonFusion + strGFEEOOLoose + strRelIso + strNOFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+												FSR_PhotonToLep2, pu_weight);
+										GF_EEOOLooseIso_NOFSR++;
+									}
+									else
+									{
+										if (fsr_photonlep1 && !fsr_photonlep2)
+										{
+											histos.fillHiggsHist(strGluonFusion + strGFEEOOLoose + strAllEvents, Dimuon, FSR_PhotonToLep1, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFEEOOLoose + strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFEEOOLoose + strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1, pu_weight);
+											GF_EEOOLooseIso_OneFSR++;
+										}
+										if (fsr_photonlep2 && !fsr_photonlep1)
+										{
+											histos.fillHiggsHist(strGluonFusion + strGFEEOOLoose + strAllEvents, Dimuon, FSR_PhotonToLep2, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFEEOOLoose + strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFEEOOLoose + strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep2, pu_weight);
+											GF_EEOOLooseIso_OneFSR++;
+										}
+										if (fsr_photonlep1 && fsr_photonlep2)
+										{
+											histos.fillHiggsHist(strGluonFusion + strGFEEOOLoose + strAllEvents, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFEEOOLoose + strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFEEOOLoose + strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+													FSR_PhotonToLep2, pu_weight);
+											GF_EEOOLooseIso_TwoFSR++;
+										}
+									}
+								}
+								if (GF_cat == 7)
+								{
+									GF_TwoJets_Iso++;
+									if (abs(125.0 - Dimuon.M()) <= abs(125.0 - (Dimuon + FSR_PhotonToLep1 + FSR_PhotonToLep2).M()))
+									{
+										histos.fillHiggsHist(strGluonFusion + strGFTwoJets + strAllEvents, Dimuon, pu_weight);
+										histos.fillHiggsHist(strGluonFusion + strGFTwoJets + strRelIso + strNOFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+										histos.fillHiggsHist(strGluonFusion + strGFTwoJets + strRelIso + strNOFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+												FSR_PhotonToLep2, pu_weight);
+										GF_TwoJetsIso_NOFSR++;
+									}
+									else
+									{
+										if (fsr_photonlep1 && !fsr_photonlep2)
+										{
+											histos.fillHiggsHist(strGluonFusion + strGFTwoJets + strAllEvents, Dimuon, FSR_PhotonToLep1, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFTwoJets + strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFTwoJets + strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1, pu_weight);
+											GF_TwoJetsIso_OneFSR++;
+										}
+										if (fsr_photonlep2 && !fsr_photonlep1)
+										{
+											histos.fillHiggsHist(strGluonFusion + strGFTwoJets + strAllEvents, Dimuon, FSR_PhotonToLep2, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFTwoJets + strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFTwoJets + strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep2, pu_weight);
+											GF_TwoJetsIso_OneFSR++;
+										}
+										if (fsr_photonlep1 && fsr_photonlep2)
+										{
+											histos.fillHiggsHist(strGluonFusion + strGFTwoJets + strAllEvents, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFTwoJets + strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+											histos.fillHiggsHist(strGluonFusion + strGFTwoJets + strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+													FSR_PhotonToLep2, pu_weight);
+											GF_TwoJetsIso_TwoFSR++;
 										}
 									}
 								}
 							}
 						}
 
-						if (!fsr_photonlep1_reliso && !fsr_photonlep2_reliso)
+						if (Vector_Boson || data)
 						{
-							histos.fillHiggsHist(strAllEvents + tagAll, Dimuon, pu_weight);
-							histos.fillHiggsHist(strAllEvents + tagAllNORelIsoNOFFSR, Dimuon, pu_weight);
-							histos.fillHiggsHist(strRelIso + strNOFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
-							histos.fillHiggsHist(strRelIso + strNOFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
-									FSR_PhotonToLep2, pu_weight);
-							histos.fillHiggsHist(strRelIso + tagAll, Dimuon, pu_weight);
-							histos.fillHiggsHist(strtest+tagNoFSRPhoton+tagOnlyDimuon, Dimuon, pu_weight);
-							dimuon_RelIsosel_evt++;
-							if (Dimuon.M() < 135.0 && Dimuon.M() > 115.0)
+							histos.fillMuonHist(strVectorBoson + strAfterDimuonRelIso, Reco_lepton1, Reco_lepton2, pu_weight);
+							if (VBF_cat == 1)
 							{
-								histos.fillHistogram(strtest + tagNoFSRPhoton, "PtDimuon",  Dimuon.Pt(), pu_weight);
+								VBF_Tight_Iso++;
+								if (abs(125.0 - Dimuon.M()) <= abs(125.0 - (Dimuon + FSR_PhotonToLep1 + FSR_PhotonToLep2).M()))
+								{
+									histos.fillHiggsHist(strVectorBoson + strVBFTight + strAllEvents, Dimuon, pu_weight);
+									histos.fillHiggsHist(strVectorBoson + strVBFTight + strRelIso + strNOFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strVectorBoson + strVBFTight + strRelIso + strNOFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+											FSR_PhotonToLep2, pu_weight);
+									VBF_TightIso_NOFSR++;
+								}
+								else
+								{
+									if (fsr_photonlep1 && !fsr_photonlep2)
+									{
+										histos.fillHiggsHist(strVectorBoson + strVBFTight + strAllEvents, Dimuon, FSR_PhotonToLep1, pu_weight);
+										histos.fillHiggsHist(strVectorBoson + strVBFTight + strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+										histos.fillHiggsHist(strVectorBoson + strVBFTight + strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1, pu_weight);
+										VBF_TightIso_OneFSR++;
+									}
+									if (fsr_photonlep2 && !fsr_photonlep1)
+									{
+										histos.fillHiggsHist(strVectorBoson + strVBFTight + strAllEvents, Dimuon, FSR_PhotonToLep2, pu_weight);
+										histos.fillHiggsHist(strVectorBoson + strVBFTight + strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+										histos.fillHiggsHist(strVectorBoson + strVBFTight + strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep2, pu_weight);
+										VBF_TightIso_OneFSR++;
+									}
+									if (fsr_photonlep1 && fsr_photonlep2)
+									{
+										histos.fillHiggsHist(strVectorBoson + strVBFTight + strAllEvents, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
+										histos.fillHiggsHist(strVectorBoson + strVBFTight + strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+										histos.fillHiggsHist(strVectorBoson + strVBFTight + strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+												FSR_PhotonToLep2, pu_weight);
+										VBF_TightIso_TwoFSR++;
+									}
+								}
 							}
-						}
 
-						histos.fillHistogram(strtest + tagothers, "FSRperEvent", FSRperEvent);
-						if (fsr_photonlep1_reliso && !fsr_photonlep2_reliso)
-						{
-							histos.fillHiggsHist(strAllEvents + tagAll, Dimuon, FSR_PhotonToLep1, pu_weight);
-							histos.fillHiggsHist(strAllEvents + tagAllNORelIsoNOFFSR, Dimuon, FSR_PhotonToLep1, pu_weight);
-							histos.fillHiggsHist(strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
-							histos.fillHiggsHist(strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1, pu_weight);
-							histos.fillHiggsHist(strRelIso + tagAll, Dimuon, FSR_PhotonToLep1, pu_weight);
-							histos.fillHiggsHist(strtest + tagOneFSRPhoton + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1, pu_weight);
-							histos.fillHiggsHist(strtest + tagOneFSRPhoton + tagOnlyDimuon, Dimuon, pu_weight);
-							fsr_photonstolep1iso++;
-
-						if ((Dimuon + FSR_PhotonToLep1).M() < 135.0 && (Dimuon + FSR_PhotonToLep1).M() > 115.0)
+							if (VBF_cat == 2)
 							{
-								histos.fillHistogram(strtest + tagOneFSRPhoton, "DeltaDimuonPH", Dimuon.DeltaR(FSR_PhotonToLep1), pu_weight);
-								histos.fillHistogram(strtest + tagOneFSRPhoton, strIsolation1, RelIso1, pu_weight);
-								histos.fillHistogram(strtest + tagOneFSRPhoton, "PtDimuon",Dimuon.Pt(), pu_weight);
-								histos.fillHistogram(strtest + tagOneFSRPhoton, "PtDimuonPH", (Dimuon+FSR_PhotonToLep1).Pt(), pu_weight);
-								histos.fillHistogram(strtest + tagOneFSRPhoton, "PtPH", FSR_PhotonToLep1.Pt(), pu_weight);
-							}
-						}
-						if (fsr_photonlep2_reliso && !fsr_photonlep1_reliso)
-						{
-
-							histos.fillHiggsHist(strAllEvents + tagAll, Dimuon, FSR_PhotonToLep2, pu_weight);
-							histos.fillHiggsHist(strAllEvents + tagAllNORelIsoNOFFSR, Dimuon, FSR_PhotonToLep2, pu_weight);
-							histos.fillHiggsHist(strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
-							histos.fillHiggsHist(strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep2, pu_weight);
-							histos.fillHiggsHist(strRelIso + tagAll, Dimuon, FSR_PhotonToLep2, pu_weight);
-							histos.fillHiggsHist(strtest + tagOneFSRPhoton + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep2, pu_weight);
-							histos.fillHiggsHist(strtest + tagOneFSRPhoton + tagOnlyDimuon, Dimuon, pu_weight);
-							fsr_photonstolep2iso++;
-
-							if ((Dimuon + FSR_PhotonToLep2).M() < 135.0 && (Dimuon + FSR_PhotonToLep2).M() > 115.0)
-							{
-								histos.fillHistogram(strtest + tagOneFSRPhoton, "DeltaDimuonPH", Dimuon.DeltaR(FSR_PhotonToLep2), pu_weight);
-								histos.fillHistogram(strtest + tagOneFSRPhoton, strIsolation2, RelIso2, pu_weight);
-								histos.fillHistogram(strtest + tagOneFSRPhoton, "PtDimuon", Dimuon.Pt(), pu_weight);
-								histos.fillHistogram(strtest + tagOneFSRPhoton, "PtDimuonPH", (Dimuon + FSR_PhotonToLep2).Pt(),pu_weight);
-								histos.fillHistogram(strtest + tagOneFSRPhoton, "PtPH", FSR_PhotonToLep2.Pt(), pu_weight);
-							}
-						}
-						if (fsr_photonlep1_reliso && fsr_photonlep2_reliso)
-						{
-
-							histos.fillHiggsHist(strAllEvents + tagAll, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
-							histos.fillHiggsHist(strAllEvents + tagAllNORelIsoNOFFSR, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2,
-									pu_weight);
-							histos.fillHiggsHist(strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
-							histos.fillHiggsHist(strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
-									FSR_PhotonToLep2, pu_weight);
-							histos.fillHiggsHist(strRelIso + tagAll, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
-							histos.fillHiggsHist(strtest + tagTwoFSRPhoton + tagOnlyDimuon, Dimuon, pu_weight);
-							histos.fillHiggsHist(strtest + tagTwoFSRPhoton + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
-									FSR_PhotonToLep2, pu_weight);
-							fsr_photonstolepiso_both++;
-							if ((Dimuon + FSR_PhotonToLep1 + FSR_PhotonToLep2).M() < 135.0
-									&& (Dimuon + FSR_PhotonToLep1 + FSR_PhotonToLep2).M() > 115.0)
-							{
-								histos.fillHistogram(strtest + tagTwoFSRPhoton, "DeltaDimuonPH1", Dimuon.DeltaR(FSR_PhotonToLep1), pu_weight);
-								histos.fillHistogram(strtest + tagTwoFSRPhoton, "DeltaDimuonPH2", Dimuon.DeltaR(FSR_PhotonToLep2), pu_weight);
-								histos.fillHistogram(strtest + tagTwoFSRPhoton, strIsolation1, RelIso1, pu_weight);
-								histos.fillHistogram(strtest + tagTwoFSRPhoton, strIsolation2, RelIso2, pu_weight);
-								histos.fillHistogram(strtest + tagTwoFSRPhoton, "PtDimuon", Dimuon.Pt(), pu_weight);
-								histos.fillHistogram(strtest + tagTwoFSRPhoton, "PtDimuonPH", (Dimuon+FSR_PhotonToLep1+FSR_PhotonToLep2).Pt(), pu_weight);
-								histos.fillHistogram(strtest + tagTwoFSRPhoton, "PtPH1", FSR_PhotonToLep1.Pt(), pu_weight);
-								histos.fillHistogram(strtest + tagTwoFSRPhoton, "PtPH2", FSR_PhotonToLep2.Pt(), pu_weight);
+								VBF_Loose_Iso++;
+								if (abs(125.0 - Dimuon.M()) <= abs(125.0 - (Dimuon + FSR_PhotonToLep1 + FSR_PhotonToLep2).M()))
+								{
+									histos.fillHiggsHist(strVectorBoson + strVBFLoose + strAllEvents, Dimuon, pu_weight);
+									histos.fillHiggsHist(strVectorBoson + strVBFLoose + strRelIso + strNOFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strVectorBoson + strVBFLoose + strRelIso + strNOFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+											FSR_PhotonToLep2, pu_weight);
+									VBF_LooseIso_NOFSR++;
+								}
+								else
+								{
+									if (fsr_photonlep1 && !fsr_photonlep2)
+									{
+										histos.fillHiggsHist(strVectorBoson + strVBFLoose + strAllEvents, Dimuon, FSR_PhotonToLep1, pu_weight);
+										histos.fillHiggsHist(strVectorBoson + strVBFLoose + strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+										histos.fillHiggsHist(strVectorBoson + strVBFLoose + strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1, pu_weight);
+										VBF_LooseIso_OneFSR++;
+									}
+									if (fsr_photonlep2 && !fsr_photonlep1)
+									{
+										histos.fillHiggsHist(strVectorBoson + strVBFLoose + strAllEvents, Dimuon, FSR_PhotonToLep2, pu_weight);
+										histos.fillHiggsHist(strVectorBoson + strVBFLoose + strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+										histos.fillHiggsHist(strVectorBoson + strVBFLoose + strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep2, pu_weight);
+										VBF_LooseIso_OneFSR++;
+									}
+									if (fsr_photonlep1 && fsr_photonlep2)
+									{
+										histos.fillHiggsHist(strVectorBoson + strVBFLoose + strAllEvents, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
+										histos.fillHiggsHist(strVectorBoson + strVBFLoose + strRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+										histos.fillHiggsHist(strVectorBoson + strVBFLoose + strRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+												FSR_PhotonToLep2, pu_weight);
+										VBF_LooseIso_TwoFSR++;
+									}
+								}
 							}
 						}
 					}
 				}
 			}
-			// FSR Photons!!
+			//------------If the muons didn't pass any reliso--------------------
 			if (pass_dimuon && !pass_dimuon_RelIso)
 			{
-				for (int ph = 0; ph < FSRPhoton_pt->size(); ph++)
+				if (Dimuon.M() > 115.0 && Dimuon.M() < 135.0)
 				{
-					FSR_Photon_TL.SetPtEtaPhiE(FSRPhoton_pt->at(ph), FSRPhoton_eta->at(ph), FSRPhoton_phi->at(ph),
-							FSRPhoton_energy->at(ph));
-
-					FSRIso = (FSRPhoton_isoCHPU->at(ph) + FSRPhoton_isoNHPhot->at(ph)) / FSRPhoton_pt->at(ph);
-
-					fsr_all++;
-
-					if (FSR_Photon_TL.Pt() > 2.0 && abs(FSR_Photon_TL.Eta()) < 2.4 && FSRIso < 1.8)
+					if (Gluon_Fusion || data)
 					{
-						fsr_photons++;
-
-						DR_FSR_lep1 = FSRdeltaR(FSR_Photon_TL, Reco_lepton1);
-						DR_FSR_lep2 = FSRdeltaR(FSR_Photon_TL, Reco_lepton2);
-						DROverET_1 = FSRDROverET2(FSR_Photon_TL, DR_FSR_lep1);
-						DROverET_2 = FSRDROverET2(FSR_Photon_TL, DR_FSR_lep2);
-
-						//For lepton 1 Only;
-						//if (DR_FSR_lep1 >= 0.5 && DROverET_1 < 0.012)
-						if (DROverET_1 < 0.012)
+						if (GF_cat == 1)
 						{
-							if (FSR_PhotonToLep2 != FSR_Photon_TL)
+							if (abs(125.0 - Dimuon.M()) <= abs(125.0 - (Dimuon + FSR_PhotonToLep1 + FSR_PhotonToLep2).M()))
 							{
-								histos.fillPhotonHist(strNonRelIso + tagPhotons, FSR_Photon_TL, pu_weight);
-								histos.fillHistogram(strNonRelIso + tagPhotons, strDelta1, DR_FSR_lep1, pu_weight);
-								if (DROverET_1 < minDrOEt1)
+								histos.fillHiggsHist(strGluonFusion + strGFBBTight + strAllEvents, Dimuon, pu_weight);
+								histos.fillHiggsHist(strGluonFusion + strGFBBTight + strNonRelIso + strNOFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+								histos.fillHiggsHist(strGluonFusion + strGFBBTight + strNonRelIso + strNOFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+										FSR_PhotonToLep2, pu_weight);
+								GF_BBTightNoIso_NOFSR++;
+							}
+							else
+							{
+								if (fsr_photonlep1 && !fsr_photonlep2)
 								{
-									minDrOEt1 = DROverET_1;
-									FSR_PhotonToLep1 = FSR_Photon_TL;
-									fsr_photonlep1_match = true;
+									histos.fillHiggsHist(strGluonFusion + strGFBBTight + strAllEvents, Dimuon, FSR_PhotonToLep1, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFBBTight + strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFBBTight + strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1, pu_weight);
+									GF_BBTightNoIso_OneFSR++;
+								}
+								if (fsr_photonlep2 && !fsr_photonlep1)
+								{
+									histos.fillHiggsHist(strGluonFusion + strGFBBTight + strAllEvents, Dimuon, FSR_PhotonToLep2, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFBBTight + strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFBBTight + strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep2, pu_weight);
+									GF_BBTightNoIso_OneFSR++;
+								}
+								if (fsr_photonlep1 && fsr_photonlep2)
+								{
+									histos.fillHiggsHist(strGluonFusion + strGFBBTight + strAllEvents, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFBBTight + strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFBBTight + strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+											FSR_PhotonToLep2, pu_weight);
+									GF_BBTightNoIso_TwoFSR++;
 								}
 							}
 						}
-						//For lepton 2 Only;
-						//if (DR_FSR_lep2 >= 0.5 && DROverET_2 < 0.012)
-						if (DROverET_1 < 0.012)
+						if (GF_cat == 2)
 						{
-							if (FSR_PhotonToLep1 != FSR_Photon_TL)
+							if (abs(125.0 - Dimuon.M()) <= abs(125.0 - (Dimuon + FSR_PhotonToLep1 + FSR_PhotonToLep2).M()))
 							{
-								histos.fillPhotonHist(strNonRelIso + tagPhotons, FSR_Photon_TL, pu_weight);
-								histos.fillHistogram(strNonRelIso + tagPhotons, strDelta2, DR_FSR_lep2, pu_weight);
-								if (DROverET_2 < minDrOEt2)
+								histos.fillHiggsHist(strGluonFusion + strGFBEBOTight + strAllEvents, Dimuon, pu_weight);
+								histos.fillHiggsHist(strGluonFusion + strGFBEBOTight + strNonRelIso + strNOFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+								histos.fillHiggsHist(strGluonFusion + strGFBEBOTight + strNonRelIso + strNOFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+										FSR_PhotonToLep2, pu_weight);
+								GF_BEBOTightNoIso_NOFSR++;
+							}
+							else
+							{
+								if (fsr_photonlep1 && !fsr_photonlep2)
 								{
-									minDrOEt2 = DROverET_1;
-									FSR_PhotonToLep2 = FSR_Photon_TL;
-									fsr_photonlep2_match = true;
+									histos.fillHiggsHist(strGluonFusion + strGFBEBOTight + strAllEvents, Dimuon, FSR_PhotonToLep1, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFBEBOTight + strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFBEBOTight + strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1, pu_weight);
+									GF_BEBOTightNoIso_OneFSR++;
+								}
+								if (fsr_photonlep2 && !fsr_photonlep1)
+								{
+									histos.fillHiggsHist(strGluonFusion + strGFBEBOTight + strAllEvents, Dimuon, FSR_PhotonToLep2, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFBEBOTight + strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFBEBOTight + strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep2, pu_weight);
+									GF_BEBOTightNoIso_OneFSR++;
+								}
+								if (fsr_photonlep1 && fsr_photonlep2)
+								{
+									histos.fillHiggsHist(strGluonFusion + strGFBEBOTight + strAllEvents, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFBEBOTight + strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFBEBOTight + strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+											FSR_PhotonToLep2, pu_weight);
+									GF_BEBOTightNoIso_TwoFSR++;
+								}
+							}
+						}
+						if (GF_cat == 3)
+						{
+							if (abs(125.0 - Dimuon.M()) <= abs(125.0 - (Dimuon + FSR_PhotonToLep1 + FSR_PhotonToLep2).M()))
+							{
+								histos.fillHiggsHist(strGluonFusion + strGFEEOOTight + strAllEvents, Dimuon, pu_weight);
+								histos.fillHiggsHist(strGluonFusion + strGFEEOOTight + strNonRelIso + strNOFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+								histos.fillHiggsHist(strGluonFusion + strGFEEOOTight + strNonRelIso + strNOFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+										FSR_PhotonToLep2, pu_weight);
+								GF_EEOOTightNoIso_NOFSR++;
+							}
+							else
+							{
+								if (fsr_photonlep1 && !fsr_photonlep2)
+								{
+									histos.fillHiggsHist(strGluonFusion + strGFEEOOTight + strAllEvents, Dimuon, FSR_PhotonToLep1, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFEEOOTight + strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFEEOOTight + strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1, pu_weight);
+									GF_EEOOTightNoIso_OneFSR++;
+								}
+								if (fsr_photonlep2 && !fsr_photonlep1)
+								{
+									histos.fillHiggsHist(strGluonFusion + strGFEEOOTight + strAllEvents, Dimuon, FSR_PhotonToLep2, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFEEOOTight + strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFEEOOTight + strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep2, pu_weight);
+									GF_EEOOTightNoIso_OneFSR++;
+								}
+								if (fsr_photonlep1 && fsr_photonlep2)
+								{
+									histos.fillHiggsHist(strGluonFusion + strGFEEOOTight + strAllEvents, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFEEOOTight + strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFEEOOTight + strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+											FSR_PhotonToLep2, pu_weight);
+									GF_EEOOTightNoIso_TwoFSR++;
+								}
+							}
+						}
+						if (GF_cat == 4)
+						{
+							if (abs(125.0 - Dimuon.M()) <= abs(125.0 - (Dimuon + FSR_PhotonToLep1 + FSR_PhotonToLep2).M()))
+							{
+								histos.fillHiggsHist(strGluonFusion + strGFBBLoose + strAllEvents, Dimuon, pu_weight);
+								histos.fillHiggsHist(strGluonFusion + strGFBBLoose + strNonRelIso + strNOFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+								histos.fillHiggsHist(strGluonFusion + strGFBBLoose + strNonRelIso + strNOFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+										FSR_PhotonToLep2, pu_weight);
+								GF_BBLooseNoIso_NOFSR++;
+							}
+							else
+							{
+								if (fsr_photonlep1 && !fsr_photonlep2)
+								{
+									histos.fillHiggsHist(strGluonFusion + strGFBBLoose + strAllEvents, Dimuon, FSR_PhotonToLep1, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFBBLoose + strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFBBLoose + strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1, pu_weight);
+									GF_BBLooseNoIso_OneFSR++;
+								}
+								if (fsr_photonlep2 && !fsr_photonlep1)
+								{
+									histos.fillHiggsHist(strGluonFusion + strGFBBLoose + strAllEvents, Dimuon, FSR_PhotonToLep2, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFBBLoose + strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFBBLoose + strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep2, pu_weight);
+									GF_BBLooseNoIso_OneFSR++;
+								}
+								if (fsr_photonlep1 && fsr_photonlep2)
+								{
+									histos.fillHiggsHist(strGluonFusion + strGFBBLoose + strAllEvents, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFBBLoose + strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFBBLoose + strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+											FSR_PhotonToLep2, pu_weight);
+									GF_BBLooseNoIso_TwoFSR++;
+								}
+							}
+						}
+						if (GF_cat == 5)
+						{
+							if (abs(125.0 - Dimuon.M()) <= abs(125.0 - (Dimuon + FSR_PhotonToLep1 + FSR_PhotonToLep2).M()))
+							{
+								histos.fillHiggsHist(strGluonFusion + strGFBEBOLoose + strAllEvents, Dimuon, pu_weight);
+								histos.fillHiggsHist(strGluonFusion + strGFBEBOLoose + strNonRelIso + strNOFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+								histos.fillHiggsHist(strGluonFusion + strGFBEBOLoose + strNonRelIso + strNOFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+										FSR_PhotonToLep2, pu_weight);
+								GF_BEBOLooseNoIso_NOFSR++;
+							}
+							else
+							{
+								if (fsr_photonlep1 && !fsr_photonlep2)
+								{
+									histos.fillHiggsHist(strGluonFusion + strGFBEBOLoose + strAllEvents, Dimuon, FSR_PhotonToLep1, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFBEBOLoose + strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFBEBOLoose + strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1, pu_weight);
+									GF_BEBOLooseNoIso_OneFSR++;
+								}
+								if (fsr_photonlep2 && !fsr_photonlep1)
+								{
+									histos.fillHiggsHist(strGluonFusion + strGFBEBOLoose + strAllEvents, Dimuon, FSR_PhotonToLep2, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFBEBOLoose + strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFBEBOLoose + strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep2, pu_weight);
+									GF_BEBOLooseNoIso_OneFSR++;
+								}
+								if (fsr_photonlep1 && fsr_photonlep2)
+								{
+									histos.fillHiggsHist(strGluonFusion + strGFBEBOLoose + strAllEvents, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFBEBOLoose + strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFBEBOLoose + strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+											FSR_PhotonToLep2, pu_weight);
+									GF_BEBOLooseNoIso_TwoFSR++;
+								}
+							}
+						}
+						if (GF_cat == 6)
+						{
+							if (abs(125.0 - Dimuon.M()) <= abs(125.0 - (Dimuon + FSR_PhotonToLep1 + FSR_PhotonToLep2).M()))
+							{
+								histos.fillHiggsHist(strGluonFusion + strGFEEOOLoose + strAllEvents, Dimuon, pu_weight);
+								histos.fillHiggsHist(strGluonFusion + strGFEEOOLoose + strNonRelIso + strNOFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+								histos.fillHiggsHist(strGluonFusion + strGFEEOOLoose + strNonRelIso + strNOFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+										FSR_PhotonToLep2, pu_weight);
+								GF_EEOOLooseNoIso_NOFSR++;
+							}
+							else
+							{
+								if (fsr_photonlep1 && !fsr_photonlep2)
+								{
+									histos.fillHiggsHist(strGluonFusion + strGFEEOOLoose + strAllEvents, Dimuon, FSR_PhotonToLep1, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFEEOOLoose + strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFEEOOLoose + strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1, pu_weight);
+									GF_EEOOLooseNoIso_OneFSR++;
+								}
+								if (fsr_photonlep2 && !fsr_photonlep1)
+								{
+									histos.fillHiggsHist(strGluonFusion + strGFEEOOLoose + strAllEvents, Dimuon, FSR_PhotonToLep2, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFEEOOLoose + strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFEEOOLoose + strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep2, pu_weight);
+									GF_EEOOLooseNoIso_OneFSR++;
+								}
+								if (fsr_photonlep1 && fsr_photonlep2)
+								{
+									histos.fillHiggsHist(strGluonFusion + strGFEEOOLoose + strAllEvents, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFEEOOLoose + strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFEEOOLoose + strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+											FSR_PhotonToLep2, pu_weight);
+									GF_EEOOLooseNoIso_TwoFSR++;
+								}
+							}
+						}
+						if (GF_cat == 7)
+						{
+							if (abs(125.0 - Dimuon.M()) <= abs(125.0 - (Dimuon + FSR_PhotonToLep1 + FSR_PhotonToLep2).M()))
+							{
+								histos.fillHiggsHist(strGluonFusion + strGFTwoJets + strAllEvents, Dimuon, pu_weight);
+								histos.fillHiggsHist(strGluonFusion + strGFTwoJets + strNonRelIso + strNOFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+								histos.fillHiggsHist(strGluonFusion + strGFTwoJets + strNonRelIso + strNOFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+										FSR_PhotonToLep2, pu_weight);
+								GF_TwoJetsNoIso_NOFSR++;
+							}
+							else
+							{
+								if (fsr_photonlep1 && !fsr_photonlep2)
+								{
+									histos.fillHiggsHist(strGluonFusion + strGFTwoJets + strAllEvents, Dimuon, FSR_PhotonToLep1, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFTwoJets + strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFTwoJets + strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1, pu_weight);
+									GF_TwoJetsNoIso_OneFSR++;
+								}
+								if (fsr_photonlep2 && !fsr_photonlep1)
+								{
+									histos.fillHiggsHist(strGluonFusion + strGFTwoJets + strAllEvents, Dimuon, FSR_PhotonToLep2, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFTwoJets + strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFTwoJets + strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep2, pu_weight);
+									GF_TwoJetsNoIso_OneFSR++;
+								}
+								if (fsr_photonlep1 && fsr_photonlep2)
+								{
+									histos.fillHiggsHist(strGluonFusion + strGFTwoJets + strAllEvents, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFTwoJets + strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strGluonFusion + strGFTwoJets + strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+											FSR_PhotonToLep2, pu_weight);
+									GF_TwoJetsNoIso_TwoFSR++;
+								}
+							}
+						}
+					}
+
+					if (Vector_Boson || data)
+					{
+						if (VBF_cat == 1)
+						{
+							if (abs(125.0 - Dimuon.M()) <= abs(125.0 - (Dimuon + FSR_PhotonToLep1 + FSR_PhotonToLep2).M()))
+							{
+								histos.fillHiggsHist(strVectorBoson + strVBFTight + strAllEvents, Dimuon, pu_weight);
+								histos.fillHiggsHist(strVectorBoson + strVBFTight + strNonRelIso + strNOFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+								histos.fillHiggsHist(strVectorBoson + strVBFTight + strNonRelIso + strNOFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+										FSR_PhotonToLep2, pu_weight);
+								VBF_TightNoIso_NOFSR++;
+							}
+							else
+							{
+								if (fsr_photonlep1 && !fsr_photonlep2)
+								{
+									histos.fillHiggsHist(strVectorBoson + strVBFTight + strAllEvents, Dimuon, FSR_PhotonToLep1, pu_weight);
+									histos.fillHiggsHist(strVectorBoson + strVBFTight + strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strVectorBoson + strVBFTight + strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1, pu_weight);
+									VBF_TightNoIso_OneFSR++;
+								}
+								if (fsr_photonlep2 && !fsr_photonlep1)
+								{
+									histos.fillHiggsHist(strVectorBoson + strVBFTight + strAllEvents, Dimuon, FSR_PhotonToLep2, pu_weight);
+									histos.fillHiggsHist(strVectorBoson + strVBFTight + strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strVectorBoson + strVBFTight + strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep2, pu_weight);
+									VBF_TightNoIso_OneFSR++;
+								}
+								if (fsr_photonlep1 && fsr_photonlep2)
+								{
+									histos.fillHiggsHist(strVectorBoson + strVBFTight + strAllEvents, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
+									histos.fillHiggsHist(strVectorBoson + strVBFTight + strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strVectorBoson + strVBFTight + strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+											FSR_PhotonToLep2, pu_weight);
+									VBF_TightNoIso_TwoFSR++;
+								}
+							}
+						}
+						if (VBF_cat == 2)
+						{
+							if (abs(125.0 - Dimuon.M()) <= abs(125.0 - (Dimuon + FSR_PhotonToLep1 + FSR_PhotonToLep2).M()))
+							{
+								histos.fillHiggsHist(strVectorBoson + strVBFLoose + strAllEvents, Dimuon, pu_weight);
+								histos.fillHiggsHist(strVectorBoson + strVBFLoose + strNonRelIso + strNOFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+								histos.fillHiggsHist(strVectorBoson + strVBFLoose + strNonRelIso + strNOFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+										FSR_PhotonToLep2, pu_weight);
+								VBF_LooseNoIso_NOFSR++;
+							}
+							else
+							{
+								if (fsr_photonlep1 && !fsr_photonlep2)
+								{
+									histos.fillHiggsHist(strVectorBoson + strVBFLoose + strAllEvents, Dimuon, FSR_PhotonToLep1, pu_weight);
+									histos.fillHiggsHist(strVectorBoson + strVBFLoose + strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strVectorBoson + strVBFLoose + strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1, pu_weight);
+									VBF_LooseNoIso_OneFSR++;
+								}
+								if (fsr_photonlep2 && !fsr_photonlep1)
+								{
+									histos.fillHiggsHist(strVectorBoson + strVBFLoose + strAllEvents, Dimuon, FSR_PhotonToLep2, pu_weight);
+									histos.fillHiggsHist(strVectorBoson + strVBFLoose + strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strVectorBoson + strVBFLoose + strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep2, pu_weight);
+									VBF_LooseNoIso_OneFSR++;
+								}
+								if (fsr_photonlep1 && fsr_photonlep2)
+								{
+									histos.fillHiggsHist(strVectorBoson + strVBFLoose + tagAllEvents, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
+									histos.fillHiggsHist(strVectorBoson + strVBFLoose + strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
+									histos.fillHiggsHist(strVectorBoson + strVBFLoose + strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
+											FSR_PhotonToLep2, pu_weight);
+									VBF_LooseNoIso_TwoFSR++;
 								}
 							}
 						}
 					}
 				}
-
-				/*if (abs(125.0 - Dimuon.M()) <= abs(125.0 - (Dimuon + FSR_PhotonToLep1 + FSR_PhotonToLep2).M()))
-				{
-					if (Dimuon.M() < 135.0 && Dimuon.M() > 115.0)
-					{
-						histos.fillHiggsHist(strAllEvents + tagAll, Dimuon, pu_weight);
-						histos.fillHiggsHist(strNonRelIso + strNOFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
-						histos.fillHiggsHist(strNonRelIso + strNOFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
-								FSR_PhotonToLep2, pu_weight);
-						histos.fillHiggsHist(strNonRelIso + tagAll, Dimuon, pu_weight);
-						dimuon_NORelIsosel_evt++;
-					}
-				}*/
-				//else
-				//{
-					if (fsr_photonlep1_match && !fsr_photonlep2_match)
-					{
-						if ((Dimuon + FSR_PhotonToLep1).M() < 135.0 && (Dimuon + FSR_PhotonToLep1).M() > 115.0)
-						{
-							histos.fillHiggsHist(strAllEvents + tagAll, Dimuon, FSR_PhotonToLep1, pu_weight);
-							histos.fillHiggsHist(strAllEvents + tagAllNORelIsoNOFFSR, Dimuon, FSR_PhotonToLep1, pu_weight);
-							histos.fillHiggsHist(strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
-							histos.fillHiggsHist(strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1, pu_weight);
-							histos.fillHiggsHist(strNonRelIso + tagAll, Dimuon, FSR_PhotonToLep1, pu_weight);
-							fsr_photonstolep1++;
-						}
-					}
-					if (fsr_photonlep2_match && !fsr_photonlep1_match)
-					{
-						if ((Dimuon + FSR_PhotonToLep2).M() < 135.0 && (Dimuon + FSR_PhotonToLep2).M() > 115.0)
-						{
-							histos.fillHiggsHist(strAllEvents + tagAll, Dimuon, FSR_PhotonToLep2, pu_weight);
-							histos.fillHiggsHist(strAllEvents + tagAllNORelIsoNOFFSR, Dimuon, FSR_PhotonToLep2, pu_weight);
-							histos.fillHiggsHist(strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
-							histos.fillHiggsHist(strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep2, pu_weight);
-							histos.fillHiggsHist(strNonRelIso + tagAll, Dimuon, FSR_PhotonToLep2, pu_weight);
-							fsr_photonstolep2++;
-						}
-					}
-					if (fsr_photonlep1_match && fsr_photonlep2_match)
-					{
-						if ((Dimuon + FSR_PhotonToLep1 + FSR_PhotonToLep2).M() < 135.0
-								&& (Dimuon + FSR_PhotonToLep1 + FSR_PhotonToLep2).M() > 115.0)
-						{
-							histos.fillHiggsHist(strAllEvents + tagAll, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
-							histos.fillHiggsHist(strAllEvents + tagAllNORelIsoNOFFSR, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2,
-									pu_weight);
-							histos.fillHiggsHist(strNonRelIso + strFSREvents + tagOnlyDimuon, Dimuon, pu_weight);
-							histos.fillHiggsHist(strNonRelIso + strFSREvents + tagDimuonPlusPH, Dimuon, FSR_PhotonToLep1,
-									FSR_PhotonToLep2, pu_weight);
-							histos.fillHiggsHist(strNonRelIso + tagAll, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
-							fsr_photonstolep_both++;
-						}
-					}
-				//}
 			}
-			//============================= Gluon-Fusion Categories =============================
-			/*	if(Gluon_Fusion)
-			 {
-			 if(Jet_pt->size() < 2 || Jet_puppi_pt->size() < 2)
-			 {
-			 double MuEta1 = abs(Reco_lepton1.Eta());
-			 double MuEta2 = abs(Reco_lepton2.Eta());
-			 if (Dimuon.Pt() < 25.0 )
-			 {
-			 //-------- 01_jet BB
-			 if (MuEta1<0.8 && MuEta2<0.8)
-			 {
-			 if(pass_dimuon_RelIso)
-			 {
-			 FillHiggsHist(3, Dimuon, pu_weight);
-			 FillHiggsHist(10, Dimuon, pu_weight);
-			 BB_GF_tight_evt++;
-			 }
-			 else
-			 {
-			 FillPhotonHist(10, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
-			 if(fsr_photonlep1_match)
-			 {
-			 FillHiggsHistFSR(10, Dimuon, FSR_PhotonToLep1, pu_weight);
-			 FSR_phToLep1_BB_GF_Tight++;
-			 }
-			 if(fsr_photonlep2_match)
-			 {
-			 FillHiggsHistFSR(10, Dimuon, FSR_PhotonToLep2, pu_weight);
-			 FSR_phToLep2_BB_GF_Tight++;
-			 }
-			 if(fsr_photonlep1_match && fsr_photonlep2_match)
-			 {
-			 FillHiggsHistFSR(10, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
-			 FSR_phToBoth_BB_GF_Tight++;
-			 }
-			 BB_GF_tight_FSR_evt++;
-			 }
-			 }
-			 if ( (MuEta1 <0.8 && MuEta2 >0.8 && MuEta2 <1.6) || (MuEta2<0.8 && MuEta1>0.8 && MuEta1<1.6) || (MuEta1<0.8 && MuEta2>1.6 && MuEta2<2.4)|| (MuEta2<0.8 && MuEta1>1.6 && MuEta1<2.4) )
-			 {
-			 if(pass_dimuon_RelIso)
-			 {
-			 FillHiggsHist(4, Dimuon, pu_weight);
-			 FillHiggsHist(11, Dimuon, pu_weight);
-			 BEBO_GF_tight_evt++;
-			 }
-			 else
-			 {
-			 FillPhotonHist(11, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
-			 if(fsr_photonlep1_match)
-			 {
-			 FillHiggsHistFSR(11, Dimuon, FSR_PhotonToLep1, pu_weight);
-			 FSR_phToLep1_BEBO_GF_Tight++;
-			 }
-			 if(fsr_photonlep2_match)
-			 {
-			 FillHiggsHistFSR(11, Dimuon, FSR_PhotonToLep2, pu_weight);
-			 FSR_phToLep2_BEBO_GF_Tight++;
-			 }
-			 if(fsr_photonlep1_match && fsr_photonlep2_match)
-			 {
-			 FillHiggsHistFSR(11, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
-			 FSR_phToBoth_BEBO_GF_Tight++;
-			 }
-			 BEBO_GF_tight_FSR_evt++;
-			 }
-			 }
-			 if (MuEta1>1.6 && MuEta1<2.4 && MuEta2>1.6 && MuEta2<2.4)
-			 {
-			 if(pass_dimuon_RelIso)
-			 {
-			 FillHiggsHist(5, Dimuon, pu_weight);
-			 FillHiggsHist(12, Dimuon, pu_weight);
-			 EEOO_GF_tight_evt++;
-			 }
-			 else
-			 {
-			 FillPhotonHist(12, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
-			 if(fsr_photonlep1_match)
-			 {
-			 FillHiggsHistFSR(12, Dimuon, FSR_PhotonToLep1, pu_weight);
-			 FSR_phToLep1_EEOO_GF_Tight++;
-			 }
-			 if(fsr_photonlep2_match)
-			 {
-			 FillHiggsHistFSR(12, Dimuon, FSR_PhotonToLep2, pu_weight);
-			 FSR_phToLep2_EEOO_GF_Tight++;
-			 }
-			 if(fsr_photonlep1_match && fsr_photonlep2_match)
-			 {
-			 FillHiggsHistFSR(12, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
-			 FSR_phToBoth_EEOO_GF_Tight++;
-			 }
-			 EEOO_GF_tight_FSR_evt++;
-			 }
-			 }
-			 }
-			 else
-			 {
-			 if (MuEta1<0.8 && MuEta2<0.8)
-			 {
-			 if(pass_dimuon_RelIso)
-			 {
-			 FillHiggsHist(6, Dimuon, pu_weight);
-			 FillHiggsHist(13, Dimuon, pu_weight);
-			 BB_GF_loose_evt++;
-			 }
-			 else
-			 {
-			 FillPhotonHist(13, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
-			 if(fsr_photonlep1_match)
-			 {
-			 FillHiggsHistFSR(13, Dimuon, FSR_PhotonToLep1, pu_weight);
-			 FSR_phToLep1_BB_GF_Loose++;
-			 }
-			 if(fsr_photonlep2_match)
-			 {
-			 FillHiggsHistFSR(13, Dimuon, FSR_PhotonToLep2, pu_weight);
-			 FSR_phToLep2_BB_GF_Loose++;
-			 }
-			 if(fsr_photonlep1_match && fsr_photonlep2_match)
-			 {
-			 FillHiggsHistFSR(13, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
-			 FSR_phToBoth_BB_GF_Loose++;
-			 }
-			 BB_GF_loose_FSR_evt++;
-			 }
-			 }
-			 if ( (MuEta1 <0.8 && MuEta2 >0.8 && MuEta2 <1.6) || (MuEta2<0.8 && MuEta1>0.8 && MuEta1<1.6) || (MuEta1<0.8 && MuEta2>1.6 && MuEta2<2.4)|| (MuEta2<0.8 && MuEta1>1.6 && MuEta1<2.4) )
-			 {
-			 if(pass_dimuon_RelIso)
-			 {
-			 FillHiggsHist(7, Dimuon, pu_weight);
-			 FillHiggsHist(14, Dimuon, pu_weight);
-			 BEBO_GF_loose_evt++;
-			 }
-			 else
-			 {
-			 FillPhotonHist(14, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
-			 if(fsr_photonlep1_match)
-			 {
-			 FillHiggsHistFSR(14, Dimuon, FSR_PhotonToLep1, pu_weight);
-			 FSR_phToLep1_BEBO_GF_Loose++;
-			 }
-			 if(fsr_photonlep2_match)
-			 {
-			 FillHiggsHistFSR(14, Dimuon, FSR_PhotonToLep2, pu_weight);
-			 FSR_phToLep2_BEBO_GF_Loose++;
-			 }
-			 if(fsr_photonlep1_match && fsr_photonlep2_match)
-			 {
-			 FillHiggsHistFSR(14, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
-			 FSR_phToBoth_BEBO_GF_Loose++;
-			 }
-			 BEBO_GF_loose_FSR_evt++;
-			 }
-			 }
-			 if (MuEta1>1.6 && MuEta1<2.4 && MuEta2>1.6 && MuEta2<2.4)
-			 {
-			 if(pass_dimuon_RelIso)
-			 {
-			 FillHiggsHist(8, Dimuon, pu_weight);
-			 FillHiggsHist(15, Dimuon, pu_weight);
-			 EEOO_GF_loose_evt++;
-			 }
-			 else
-			 {
-			 FillPhotonHist(15, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
-			 if(fsr_photonlep1_match)
-			 {
-			 FillHiggsHistFSR(15, Dimuon, FSR_PhotonToLep1, pu_weight);
-			 FSR_phToLep1_EEOO_GF_Loose++;
-			 }
-			 if(fsr_photonlep2_match)
-			 {
-			 FillHiggsHistFSR(15, Dimuon, FSR_PhotonToLep2, pu_weight);
-			 FSR_phToLep2_EEOO_GF_Loose++;
-			 }
-			 if(fsr_photonlep1_match && fsr_photonlep2_match)
-			 {
-			 FillHiggsHistFSR(15, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
-			 FSR_phToBoth_EEOO_GF_Loose++;
-			 }
-			 EEOO_GF_loose_FSR_evt++;
-			 }
-			 }
-			 }
-			 }
-			 if(Jet_pt->size() >= 2 || Jet_puppi_pt->size() >= 2)
-			 {
-			 if(pass_dimuon_RelIso)
-			 {
-			 FillHiggsHist(9, Dimuon, pu_weight);
-			 FillHiggsHist(16, Dimuon, pu_weight);
-			 Twojets_GF++;
-			 }
-			 else
-			 {
-			 FillPhotonHist(16, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
-			 if(fsr_photonlep1_match)
-			 {
-			 FillHiggsHistFSR(16, Dimuon, FSR_PhotonToLep1, pu_weight);
-			 FSR_phToLep1_2jets_GF++;
-			 }
-			 if(fsr_photonlep2_match)
-			 {
-			 FillHiggsHistFSR(16, Dimuon, FSR_PhotonToLep2, pu_weight);
-			 FSR_phToLep2_2jets_GF++;
-			 }
-			 if(fsr_photonlep1_match && fsr_photonlep2_match)
-			 {
-			 FillHiggsHistFSR(16, Dimuon, FSR_PhotonToLep1, FSR_PhotonToLep2, pu_weight);
-			 FSR_phToBoth_2jets_GF++;
-			 }
-			 Twojets_GF_FSR++;
-			 }
-			 }
-			 }*/
 		}
 	}
+
 	cout << "==========================================================" << endl;
 	cout << "Events that pass the trigger:     " << trigger_evt << endl;
-	cout << "Events that pass the dimuon selection:     " << dimuon_evt << endl;
-	cout << "Events that pass the common selection (pt, eta):     " << dimuon_initialsel_evt << endl;
-	cout << "==========Relative to relISO================" << endl;
-	cout << "Events that any muon pass the RelIso:  " << BothNoreliso << endl;
-	cout << "Events in which at leat one muon pass the RelIso:  " << OneNoreliso << endl;
+	cout << "Events that pass the dimuon preselection:     " << dimuon_evt << endl;
+	cout << "Events that pass the dimuon selection:     " << dimuon_initialsel_evt << endl;
+	cout << "Events that pass the isolation (reliso or relisoFSR):  " << dimuon_passRelIso << endl;
+	cout << "==========================================================" << endl;
+	cout << "················ Relative to Isolation ···················" << endl;
 	cout << "Events that both muons pass the RelIso :  " << RelIsoReal << endl;
-	cout << "Events that no pass RelISO, but pass PassRelisoNoFSR:  " << PassRelisoNoFSR << endl;
-	cout << "Events that pass the isolation (reliso or relisoFSR):  " << AllRelIso << endl;
-	cout << "=========================================================" << endl;
-	cout << "All FSR Photons (RelIso)------------------" << fsr_all_iso << endl;
-	cout << "Events that pass the RelIso, and are near to HNO:     " << dimuon_RelIsosel_evt << endl;
-	cout << "FSR Photons associated to Lepton1 with Iso:   " << fsr_photonstolep1iso << endl;
-	cout << "FSR Photons associated to Lepton2 with Iso:   " << fsr_photonstolep2iso << endl;
-	cout << "FSR Photons associated to both leptons with Iso:   " << fsr_photonstolepiso_both << endl;
-	cout << "All FSR Photons (NonRelIso)---------------" << fsr_all << endl;
-	cout << "Events that no pass the relIso, but are near to H: " << dimuon_NORelIsosel_evt << endl;
-	cout << "FSR Photons:      " << fsr_photons << endl;
-	cout << "FSR Photons associated to Lepton1:   " << fsr_photonstolep1 << endl;
-	cout << "FSR Photons associated to Lepton2:   " << fsr_photonstolep2 << endl;
-	cout << "FSR Photons associated to both leptons:   " << fsr_photonstolep_both << endl;
-	cout << "=========================================================" << endl;
+	cout << "Events in which at least one muon do not pass the RelIso:  " << OneNoreliso << endl;
+	cout << "Events in which both muons do not pass the RelIso:  " << BothNoreliso << endl;
+	cout << "Events that no pass RelIso, but pass PassRelIso-gamma:  " << PassRelisoNoFSR << endl;
+	cout << "==========================================================" << endl;
 
-	/*if(Gluon_Fusion)
-	 {
-	 cout<<"Gluon Fusion Categories:    "<<endl;
-	 cout<<"*****************************************************"<<endl;
-	 cout<<"BB GF Tight------  "<< endl;
-	 cout<<"Events without FRS: "<<BB_GF_tight_evt<<endl;
-	 cout<<"Events with FRS: "<<BB_GF_tight_FSR_evt<<endl;
-	 cout<<"FSR Photons associated to Lepton1:   "<<FSR_phToLep1_BB_GF_Tight<<endl;
-	 cout<<"FSR Photons associated to Lepton2:   "<<FSR_phToLep2_BB_GF_Tight<<endl;
-	 cout<<"FSR Photons associated to both leptons:   "<<FSR_phToBoth_BB_GF_Tight<<endl;
+	if (Gluon_Fusion || data)
+	{
+		cout << "····················Gluon Fusion Categories···············" << endl;
+		cout << "------------------------GF BB Tight-----------------------" << endl;
+		cout << "Events in category GF BB Tight:         " << GF_BB_Tight_cat << endl;
+		cout << "Events that pass isolation:         " << GF_BBTight_Iso << endl;
+		cout << "Events pass iso, closer to H or without FSR Ph:    " << GF_BBTightIso_NOFSR << endl;
+		cout << "Events pass iso with one FSR Ph:        " << GF_BBTightIso_OneFSR << endl;
+		cout << "Events pass iso with two FSR Ph:        " << GF_BBTightIso_TwoFSR << endl;
+		cout << "Events that not pass isolation:         " << GF_BB_Tight_cat - GF_BBTight_Iso << endl;
+		cout << "Events not pass iso, closer to H or without FSR Ph:   " << GF_BBTightNoIso_NOFSR << endl;
+		cout << "Events not pass iso with one FSR Ph:        " << GF_BBTightNoIso_OneFSR << endl;
+		cout << "Events not pass iso with two FSR Ph:        " << GF_BBTightNoIso_TwoFSR << endl;
+		cout << "------------------------GF BEBO Tight-----------------------" << endl;
+		cout << "Events in category GF BB Tight:         " << GF_BEBO_Tight_cat << endl;
+		cout << "Events that pass isolation:         " << GF_BEBOTight_Iso << endl;
+		cout << "Events pass iso, closer to H or without FSR Ph:    " << GF_BEBOTightIso_NOFSR << endl;
+		cout << "Events pass iso with one FSR Ph:        " << GF_BEBOTightIso_OneFSR << endl;
+		cout << "Events pass iso with two FSR Ph:        " << GF_BEBOTightIso_TwoFSR << endl;
+		cout << "Events that not pass isolation:         " << GF_BEBO_Tight_cat - GF_BEBOTight_Iso << endl;
+		cout << "Events not pass iso, closer to H or without FSR Ph:   " << GF_BEBOTightNoIso_NOFSR << endl;
+		cout << "Events not pass iso with one FSR Ph:        " << GF_BEBOTightNoIso_OneFSR << endl;
+		cout << "Events not pass iso with two FSR Ph:        " << GF_BEBOTightNoIso_TwoFSR << endl;
+		cout << "------------------------GF EEOO Tight-----------------------" << endl;
+		cout << "Events in category GF BB Tight:         " << GF_EEOO_Tight_cat << endl;
+		cout << "Events that pass isolation:         " << GF_EEOOTight_Iso << endl;
+		cout << "Events pass iso, closer to H or without FSR Ph:    " << GF_EEOOTightIso_NOFSR << endl;
+		cout << "Events pass iso with one FSR Ph:        " << GF_EEOOTightIso_OneFSR << endl;
+		cout << "Events pass iso with two FSR Ph:        " << GF_EEOOTightIso_TwoFSR << endl;
+		cout << "Events that not pass isolation:         " << GF_EEOO_Tight_cat - GF_EEOOTight_Iso << endl;
+		cout << "Events not pass iso, closer to H or without FSR Ph:   " << GF_EEOOTightNoIso_NOFSR << endl;
+		cout << "Events not pass iso with one FSR Ph:        " << GF_EEOOTightNoIso_OneFSR << endl;
+		cout << "Events not pass iso with two FSR Ph:        " << GF_EEOOTightNoIso_TwoFSR << endl;
+		cout << "------------------------GF BB Loose-----------------------" << endl;
+		cout << "Events in category GF BB Loose:         " << GF_BB_Loose_cat << endl;
+		cout << "Events that pass isolation:         " << GF_BBLoose_Iso << endl;
+		cout << "Events pass iso, closer to H or without FSR Ph:    " << GF_BBLooseIso_NOFSR << endl;
+		cout << "Events pass iso with one FSR Ph:        " << GF_BBLooseIso_OneFSR << endl;
+		cout << "Events pass iso with two FSR Ph:        " << GF_BBLooseIso_TwoFSR << endl;
+		cout << "Events that not pass isolation:         " << GF_BB_Loose_cat - GF_BBLoose_Iso << endl;
+		cout << "Events not pass iso, closer to H or without FSR Ph:   " << GF_BBLooseNoIso_NOFSR << endl;
+		cout << "Events not pass iso with one FSR Ph:        " << GF_BBLooseNoIso_OneFSR << endl;
+		cout << "Events not pass iso with two FSR Ph:        " << GF_BBLooseNoIso_TwoFSR << endl;
+		cout << "------------------------GF BEBO Loose-----------------------" << endl;
+		cout << "Events in category GF BB Loose:         " << GF_BEBO_Loose_cat << endl;
+		cout << "Events that pass isolation:         " << GF_BEBOLoose_Iso << endl;
+		cout << "Events pass iso, closer to H or without FSR Ph:    " << GF_BEBOLooseIso_NOFSR << endl;
+		cout << "Events pass iso with one FSR Ph:        " << GF_BEBOLooseIso_OneFSR << endl;
+		cout << "Events pass iso with two FSR Ph:        " << GF_BEBOLooseIso_TwoFSR << endl;
+		cout << "Events that not pass isolation:         " << GF_BEBO_Loose_cat - GF_BEBOLoose_Iso << endl;
+		cout << "Events not pass iso, closer to H or without FSR Ph:   " << GF_BEBOLooseNoIso_NOFSR << endl;
+		cout << "Events not pass iso with one FSR Ph:        " << GF_BEBOLooseNoIso_OneFSR << endl;
+		cout << "Events not pass iso with two FSR Ph:        " << GF_BEBOLooseNoIso_TwoFSR << endl;
+		cout << "------------------------GF EEOO Loose-----------------------" << endl;
+		cout << "Events in category GF BB Loose:         " << GF_EEOO_Loose_cat << endl;
+		cout << "Events that pass isolation:         " << GF_EEOOLoose_Iso << endl;
+		cout << "Events pass iso, closer to H or without FSR Ph:    " << GF_EEOOLooseIso_NOFSR << endl;
+		cout << "Events pass iso with one FSR Ph:        " << GF_EEOOLooseIso_OneFSR << endl;
+		cout << "Events pass iso with two FSR Ph:        " << GF_EEOOLooseIso_TwoFSR << endl;
+		cout << "Events that not pass isolation:         " << GF_EEOO_Loose_cat - GF_EEOOLoose_Iso << endl;
+		cout << "Events not pass iso, closer to H or without FSR Ph:   " << GF_EEOOLooseNoIso_NOFSR << endl;
+		cout << "Events not pass iso with one FSR Ph:        " << GF_EEOOLooseNoIso_OneFSR << endl;
+		cout << "Events not pass iso with two FSR Ph:        " << GF_EEOOLooseNoIso_TwoFSR << endl;
+		cout << "------------------------GF Two Jets-----------------------" << endl;
+		cout << "Events in category GF BB Loose:         " << GF_TwoJets_cat << endl;
+		cout << "Events that pass isolation:         " << GF_TwoJets_Iso << endl;
+		cout << "Events pass iso, closer to H or without FSR Ph:    " << GF_TwoJetsIso_NOFSR << endl;
+		cout << "Events pass iso with one FSR Ph:        " << GF_TwoJetsIso_OneFSR << endl;
+		cout << "Events pass iso with two FSR Ph:        " << GF_TwoJetsIso_TwoFSR << endl;
+		cout << "Events that not pass isolation:         " << GF_TwoJets_cat - GF_TwoJets_Iso << endl;
+		cout << "Events not pass iso, closer to H or without FSR Ph:   " << GF_TwoJetsNoIso_NOFSR << endl;
+		cout << "Events not pass iso with one FSR Ph:        " << GF_TwoJetsNoIso_OneFSR << endl;
+		cout << "Events not pass iso with two FSR Ph:        " << GF_TwoJetsNoIso_TwoFSR << endl;
+		cout << "==========================================================" << endl;
+	}
 
-	 cout<<"BEBO GF Tight------  "<< endl;
-	 cout<<"Events without FRS: "<<BEBO_GF_tight_evt<<endl;
-	 cout<<"Events with FRS: "<<BEBO_GF_tight_FSR_evt<<endl;
-	 cout<<"FSR Photons associated to Lepton1:   "<<FSR_phToLep1_BEBO_GF_Tight<<endl;
-	 cout<<"FSR Photons associated to Lepton2:   "<<FSR_phToLep2_BEBO_GF_Tight<<endl;
-	 cout<<"FSR Photons associated to both leptons:   "<<FSR_phToBoth_BEBO_GF_Tight<<endl;
+	if (Vector_Boson || data)
+	{
+		cout << "················ VBF Categories ························" << endl;
+		cout << "----------------VBF Tight category----------------------" << endl;
+		cout << "Events in category VBF Tight:       " << VBF_Tight_cat << endl;
+		cout << "Events that pass isolation:         " << VBF_Tight_Iso << endl;
+		cout << "Events pass iso, closer to H or without FSR Ph:    " << VBF_TightIso_NOFSR << endl;
+		cout << "Events pass iso with one FSR Ph:        " << VBF_TightIso_OneFSR << endl;
+		cout << "Events pass iso with two FSR Ph:        " << VBF_TightIso_TwoFSR << endl;
+		cout << "Events that not pass isolation:         " << VBF_Tight_cat - VBF_Tight_Iso << endl;
+		cout << "Events not pass iso, closer to H or without FSR Ph:   " << VBF_TightNoIso_NOFSR << endl;
+		cout << "Events not pass iso with one FSR Ph:        " << VBF_TightNoIso_OneFSR << endl;
+		cout << "Events not pass iso with two FSR Ph:        " << VBF_TightNoIso_TwoFSR << endl;
 
-	 cout<<"EEOO GF Tight------  "<< endl;
-	 cout<<"Events without FRS: "<<EEOO_GF_tight_evt<<endl;
-	 cout<<"Events with FRS: "<<EEOO_GF_tight_FSR_evt<<endl;
-	 cout<<"FSR Photons associated to Lepton1:   "<<FSR_phToLep1_EEOO_GF_Tight<<endl;
-	 cout<<"FSR Photons associated to Lepton2:   "<<FSR_phToLep2_EEOO_GF_Tight<<endl;
-	 cout<<"FSR Photons associated to both leptons:   "<<FSR_phToBoth_EEOO_GF_Tight<<endl;
-
-	 cout<<"BB GF Loose------  "<< endl;
-	 cout<<"Events without FRS: "<<BB_GF_loose_evt<<endl;
-	 cout<<"Events with FRS: "<<BB_GF_loose_FSR_evt<<endl;
-	 cout<<"FSR Photons associated to Lepton1:   "<<FSR_phToLep1_BB_GF_Loose<<endl;
-	 cout<<"FSR Photons associated to Lepton2:   "<<FSR_phToLep2_BB_GF_Loose<<endl;
-	 cout<<"FSR Photons associated to both leptons:   "<<FSR_phToBoth_BB_GF_Loose<<endl;
-
-	 cout<<"BEBO GF Loose------  "<< endl;
-	 cout<<"Events without FRS: "<<BEBO_GF_loose_evt<<endl;
-	 cout<<"Events with FRS: "<<BEBO_GF_loose_FSR_evt<<endl;
-	 cout<<"FSR Photons associated to Lepton1:   "<<FSR_phToLep1_BEBO_GF_Loose<<endl;
-	 cout<<"FSR Photons associated to Lepton2:   "<<FSR_phToLep2_BEBO_GF_Loose<<endl;
-	 cout<<"FSR Photons associated to both leptons:   "<<FSR_phToBoth_BEBO_GF_Loose<<endl;
-
-	 cout<<"EEOO GF Loose------  "<< endl;
-	 cout<<"Events without FRS: "<<EEOO_GF_loose_evt<<endl;
-	 cout<<"Events with FRS: "<<EEOO_GF_loose_FSR_evt<<endl;
-	 cout<<"FSR Photons associated to Lepton1:   "<<FSR_phToLep1_EEOO_GF_Loose<<endl;
-	 cout<<"FSR Photons associated to Lepton2:   "<<FSR_phToLep2_EEOO_GF_Loose<<endl;
-	 cout<<"FSR Photons associated to both leptons:   "<<FSR_phToBoth_EEOO_GF_Loose<<endl;
-
-	 cout<<"2Jets GF------  "<< endl;
-	 cout<<"Events without FRS: "<<Twojets_GF<<endl;
-	 cout<<"Events with FRS: "<<Twojets_GF_FSR<<endl;
-	 cout<<"FSR Photons associated to Lepton1:   "<<FSR_phToLep1_2jets_GF<<endl;
-	 cout<<"FSR Photons associated to Lepton2:   "<<FSR_phToLep2_2jets_GF<<endl;
-	 cout<<"FSR Photons associated to both leptons:   "<<FSR_phToBoth_2jets_GF<<endl;
-	 }*/
+		cout << "----------------VBF Loose category----------------------" << endl;
+		cout << "Events in category VBF Loose:       " << VBF_Loose_cat << endl;
+		cout << "Events that pass isolation:         " << VBF_Loose_Iso << endl;
+		cout << "Events with iso, closer to H or without FSR Ph:    " << VBF_LooseIso_NOFSR << endl;
+		cout << "Events with iso with one FSR Ph:        " << VBF_LooseIso_OneFSR << endl;
+		cout << "Events pass iso with two FSR Ph:        " << VBF_LooseIso_TwoFSR << endl;
+		cout << "Events that not pass isolation:         " << VBF_Loose_cat - VBF_Loose_Iso << endl;
+		cout << "Events not pass iso, closer to H or without FSR Ph:   " << VBF_LooseNoIso_NOFSR << endl;
+		cout << "Events not pass iso with one FSR Ph:        " << VBF_LooseNoIso_OneFSR << endl;
+		cout << "Events not pass iso with two FSR Ph:        " << VBF_LooseNoIso_TwoFSR << endl;
+		cout << "==========================================================" << endl;
+	}
 
 	//-------------------------Write the histograms----------------------------
 	histos.writeTFile();
@@ -842,7 +1187,7 @@ BSM_Analysis::BSM_Analysis(TFile* theFile, TDirectory *cdDir[], int nDir, char* 
 
 BSM_Analysis::~BSM_Analysis()
 {
-	// do anything here that needs to be done at desctruction time
+	// do anything here that needs to be done at destruction time
 }
 
 //*********************************************************************************************
@@ -869,8 +1214,9 @@ bool BSM_Analysis::passRecoTrigger(string myTrigger1, string myTrigger2)
 //                the charge of the leptons in order to make pairs with opposite signs.
 //*********************************************************************************************
 
-void BSM_Analysis::MuonsVectors(TLorentzVector& Reco_lepton1, TLorentzVector& Reco_lepton2, double& RelIso1,
-		double& RelIso2, double& RelIso_NoFSR1, double& RelIso_NoFSR2)
+void BSM_Analysis::MuonsVectors(TLorentzVector& Reco_lepton1, TLorentzVector& Reco_lepton2, double& RelIso1, double& RelIso2, double& RelIso_NoFSR1,
+		double& RelIso_NoFSR2)
+//, double& ChargedOverall1, double& ChargedOverall2,double& NeutralOverall1, double& NeutralOverall2)
 {
 	float dimuon_mass_int = 999999.;
 	TLorentzVector first_muon_vec(0., 0., 0., 0.);
@@ -895,13 +1241,19 @@ void BSM_Analysis::MuonsVectors(TLorentzVector& Reco_lepton1, TLorentzVector& Re
 						Reco_lepton1 = first_muon_vec;
 						Reco_lepton2 = Subfirst_muon_vec;
 						dimuon_mass_int = dimuon_mass;
-						RelIso1 = Muon_combinedIso->at(m1);				//Muon_isoSum->at(m1) / Muon_pt->at(m1);
-						RelIso2 = Muon_combinedIso->at(m2); //Muon_isoSum->at(m2) / Muon_pt->at(m2);
+						//RelIso1 = Muon_combinedIso->at(m1);				//Muon_isoSum->at(m1) / Muon_pt->at(m1);
+						//RelIso2 = Muon_combinedIso->at(m2);				//Muon_isoSum->at(m2) / Muon_pt->at(m2);
+						RelIso1 = Muon_trackRe_iso->at(m1);			//track iso
+						RelIso2 = Muon_trackRe_iso->at(m2);	    //track iso
 
-						RelIso_NoFSR1 = (Muon_isoCharged->at(m1)
-								+ max(0., Muon_isoNeutralHadron->at(m1) - 0.5 * (Muon_isoPU->at(m1)))) / Muon_pt->at(m1);
-						RelIso_NoFSR2 = (Muon_isoCharged->at(m2)
-								+ max(0., Muon_isoNeutralHadron->at(m2) - 0.5 * (Muon_isoPU->at(m2)))) / Muon_pt->at(m2);
+						RelIso_NoFSR1 = (Muon_isoCharged->at(m1) + max(0., Muon_isoNeutralHadron->at(m1) - 0.5 * (Muon_isoPU->at(m1)))) / Muon_pt->at(m1);
+						RelIso_NoFSR2 = (Muon_isoCharged->at(m2) + max(0., Muon_isoNeutralHadron->at(m2) - 0.5 * (Muon_isoPU->at(m2)))) / Muon_pt->at(m2);
+
+						/*ChargedOverall1 = Muon_isoCharged->at(m1) / Muon_pt->at(m1);
+						 ChargedOverall2 = Muon_isoCharged->at(m2) / Muon_pt->at(m2);
+						 NeutralOverall1 = Muon_isoNeutralHadron->at(m1) / Muon_pt->at(m1);
+						 NeutralOverall2 = Muon_isoNeutralHadron->at(m2) / Muon_pt->at(m2);*/
+
 					}
 				}
 			}
@@ -909,10 +1261,37 @@ void BSM_Analysis::MuonsVectors(TLorentzVector& Reco_lepton1, TLorentzVector& Re
 	}
 }
 
-//*********************************************************************************************
-// RelIso: Gives the value of "Relative Isolation" for the leptons. The RelIso is calcutated as
-//         (trackIso+caloIso)/muonPt
-//*********************************************************************************************
+bool BSM_Analysis::TrackIsoGamma(double& RelIso1, double& RelIso2, TLorentzVector& Muon1, TLorentzVector& Muon2, TLorentzVector& PFPhoton1, TLorentzVector& PFPhoton2)
+{
+	bool noelectron = false;
+	bool nojet = false;
+	bool onlyfsr = false;
+
+	TLorentzVector Electron(0., 0., 0., 0);
+	for (int e1 = 0; e1 < patElectron_pt->size(); e1++)
+	{
+		Electron.SetPtEtaPhiE(patElectron_pt->at(e1), patElectron_eta->at(e1), patElectron_phi->at(e1), patElectron_energy->at(e1));
+		if (Electron.DeltaR(Muon1) >= 0.3 && Electron.DeltaR(Muon2) >= 0.3)
+			noelectron = true;
+	}
+	if (patElectron_pt->size() == 0) noelectron = true;
+
+	TLorentzVector Jet(0., 0., 0., 0);
+	for (int j1 = 0; j1 < Jet_pt->size(); j1++)
+	{
+		Jet.SetPtEtaPhiE(Jet_pt->at(j1), Jet_eta->at(j1), Jet_phi->at(j1), Jet_energy->at(j1));
+		if (Jet.DeltaR(Muon1) >= 0.3 && Jet.DeltaR(Muon2) >= 0.3)
+			nojet = true;
+	}
+	if (Jet_pt->size()==0) nojet = true;
+
+	if ((PFPhoton1.DeltaR(Muon1) < 0.3 && PFPhoton2.DeltaR(Muon2) < 0.3) || (PFPhoton2.DeltaR(Muon1) < 0.3 && PFPhoton1.DeltaR(Muon2) < 0.3))
+		onlyfsr = true;
+
+	if (noelectron && nojet && onlyfsr)
+		return true;
+	return false;
+}
 
 //*********************************************************************************************
 // PhotonsVectors: this function gives the vector that contains all the vectors of the photons
@@ -1014,6 +1393,139 @@ double BSM_Analysis::FSRDROverET2(TLorentzVector& FSRPhotonVec, double fsrdr)
 	return fsrDrOEt2;
 }
 
+int BSM_Analysis::JetsVector(TLorentzVector& Muon1, TLorentzVector& Muon2)
+{
+	TLorentzVector Jet_temp(0., 0., 0., 0.);
+	TLorentzVector Jet1(0., 0., 0., 0.);
+	TLorentzVector Jet2(0., 0., 0., 0.);
+	vector<TLorentzVector> Jets_passpresel_vec;
+	Jets_passpresel_vec.erase(Jets_passpresel_vec.begin(), Jets_passpresel_vec.end());
+	bool VBF_Tight = false;
+	bool VBF_Loose = false;
+	float dijet_mass = 0.0;
+
+	if (Jet_pt->size() > 1 && Met_type1PF_pt < 40.0)
+	{
+		for (int m1 = 0; m1 < Jet_pt->size(); m1++)
+		{
+			if (Jet_pt->at(m1) > 30.0 && Jet_eta->at(m1) < 2.4 && Jet_bDiscriminator_cMVAv2->at(m1) > 0.8484)
+				continue;
+			if (Jet_pt->at(m1) > 30.0 && Jet_eta->at(m1) < 4.7)
+			{
+				Jet_temp.SetPtEtaPhiE(Jet_pt->at(m1), Jet_eta->at(m1), Jet_phi->at(m1), Jet_energy->at(m1));
+				Jets_passpresel_vec.push_back(Jet_temp);
+			}
+
+		}
+	}
+
+	if (Jets_passpresel_vec.size() > 1)
+	{
+		for (int j1 = 0; j1 < Jets_passpresel_vec.size(); j1++)
+		{
+			for (int j2 = j1 + 1; j2 < Jets_passpresel_vec.size(); j2++)
+			{
+				if (j2 != j1 && (Jets_passpresel_vec[j1].Eta() * Jets_passpresel_vec[j2].Eta() < 0))
+				{
+					if (Jets_passpresel_vec[j1].Pt() > 40.0 || Jets_passpresel_vec[j2].Pt() > 40.0)
+					{
+						Jet1 = Jets_passpresel_vec[j1];
+						Jet2 = Jets_passpresel_vec[j2];
+
+						dijet_mass = (Jet1 + Jet2).M();
+
+						if (Jet1.DeltaR(Muon1) > 0.4 && Jet1.DeltaR(Muon2) > 0.4 && Jet2.DeltaR(Muon1) > 0.4 && Jet2.DeltaR(Muon2) > 0.4)
+						{
+							if (dijet_mass > 650.0 && abs(Jet1.Eta() - Jet2.Eta()) > 2.5)
+							{
+								VBF_Tight = true;
+							}
+							else if (dijet_mass > 250.0 && abs(Jet1.Eta() - Jet2.Eta()) > 2.5)
+							{
+								VBF_Loose = true;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	if (VBF_Tight == true)
+	{
+		return 1;
+	}
+	if (VBF_Loose == true)
+	{
+		return 2;
+	}
+	return 0;
+}
+
+int BSM_Analysis::GFCategories(TLorentzVector& Muon1, TLorentzVector& Muon2)
+{
+	TLorentzVector Dimuon = Muon1 + Muon2;
+	double MuEta1 = abs(Muon1.Eta());
+	double MuEta2 = abs(Muon2.Eta());
+	bool GF_BB_Tight = false, GF_BB_Loose = false, GF_BEBO_Tight = false, GF_BEBO_Loose = false, GF_EEOO_Tight = false, GF_EEOO_Loose = false;
+	bool GF_TwoJets = false;
+
+	if (Jet_pt->size() < 2 || Jet_puppi_pt->size() < 2)
+	{
+		if (Dimuon.Pt() < 25.0)
+		{
+			if (MuEta1 < 0.8 && MuEta2 < 0.8)
+			{
+				GF_BB_Tight = true;
+			}
+			if ((MuEta1 < 0.8 && MuEta2 > 0.8 && MuEta2 < 1.6) || (MuEta2 < 0.8 && MuEta1 > 0.8 && MuEta1 < 1.6) || (MuEta1 < 0.8 && MuEta2 > 1.6 && MuEta2 < 2.4)
+					|| (MuEta2 < 0.8 && MuEta1 > 1.6 && MuEta1 < 2.4))
+			{
+				GF_BEBO_Tight = true;
+			}
+			if (MuEta1 > 1.6 && MuEta1 < 2.4 && MuEta2 > 1.6 && MuEta2 < 2.4)
+			{
+				GF_EEOO_Tight = true;
+			}
+		}
+		else
+		{
+			if (MuEta1 < 0.8 && MuEta2 < 0.8)
+			{
+				GF_BB_Loose = true;
+			}
+			if ((MuEta1 < 0.8 && MuEta2 > 0.8 && MuEta2 < 1.6) || (MuEta2 < 0.8 && MuEta1 > 0.8 && MuEta1 < 1.6) || (MuEta1 < 0.8 && MuEta2 > 1.6 && MuEta2 < 2.4)
+					|| (MuEta2 < 0.8 && MuEta1 > 1.6 && MuEta1 < 2.4))
+			{
+				GF_BEBO_Loose = true;
+			}
+			if (MuEta1 > 1.6 && MuEta1 < 2.4 && MuEta2 > 1.6 && MuEta2 < 2.4)
+			{
+				GF_EEOO_Loose = true;
+			}
+		}
+	}
+	if (Jet_pt->size() >= 2 || Jet_puppi_pt->size() >= 2)
+	{
+		GF_TwoJets = true;
+	}
+
+	if (GF_BB_Tight == true)
+		return 1;
+	if (GF_BEBO_Tight == true)
+		return 2;
+	if (GF_EEOO_Tight == true)
+		return 3;
+	if (GF_BB_Loose == true)
+		return 4;
+	if (GF_BEBO_Loose == true)
+		return 5;
+	if (GF_EEOO_Loose == true)
+		return 6;
+	if (GF_TwoJets == true)
+		return 7;
+	return 0;
+}
+
 //*********************************************************************************************
 // setBranchAdress: initialization of each object pointer. Also Set branch addresses and branch 
 //                  pointers.
@@ -1047,6 +1559,7 @@ void BSM_Analysis::setBranchAddress(TTree* BOOM)
 	Muon_isoPhoton = 0;
 	Muon_isoPU = 0;
 	Muon_combinedIso = 0;
+	Muon_trackRe_iso = 0;
 
 	patElectron_eta = 0;
 	patElectron_phi = 0;
@@ -1123,6 +1636,11 @@ void BSM_Analysis::setBranchAddress(TTree* BOOM)
 	Trigger_decision = 0;
 	ntruePUInteractions = 0;
 
+	Met_type1PF_sumEt = 0;
+	Met_type1PF_pt = 0;
+
+	pvertex_z = 0;
+
 	// Set branch addresses and branch pointers
 	if (!BOOM)
 		return;
@@ -1155,6 +1673,7 @@ void BSM_Analysis::setBranchAddress(TTree* BOOM)
 	BOOM->SetBranchAddress("Muon_isoPhoton", &Muon_isoPhoton, &b_Muon_isoPhoton);
 	BOOM->SetBranchAddress("Muon_isoPU", &Muon_isoPU, &b_Muon_isoPU);
 	BOOM->SetBranchAddress("Muon_combinedIso", &Muon_combinedIso, &b_Muon_combinedIso);
+	BOOM->SetBranchAddress("Muon_trackRe_iso", &Muon_trackRe_iso, &b_Muon_trackRe_iso);
 
 	BOOM->SetBranchAddress("patElectron_eta", &patElectron_eta, &b_patElectron_eta);
 	BOOM->SetBranchAddress("patElectron_phi", &patElectron_phi, &b_patElectron_phi);
@@ -1165,10 +1684,8 @@ void BSM_Analysis::setBranchAddress(TTree* BOOM)
 	BOOM->SetBranchAddress("patElectron_isPassMedium", &patElectron_isPassMedium, &b_patElectron_isPassMedium);
 	BOOM->SetBranchAddress("patElectron_isPassTight", &patElectron_isPassTight, &b_patElectron_isPassTight);
 	BOOM->SetBranchAddress("patElectron_isPassHEEPId", &patElectron_isPassHEEPId, &b_patElectron_isPassHEEPId);
-	BOOM->SetBranchAddress("patElectron_isoChargedHadrons", &patElectron_isoChargedHadrons,
-			&b_patElectron_isoChargedHadrons);
-	BOOM->SetBranchAddress("patElectron_isoNeutralHadrons", &patElectron_isoNeutralHadrons,
-			&b_patElectron_isoNeutralHadrons);
+	BOOM->SetBranchAddress("patElectron_isoChargedHadrons", &patElectron_isoChargedHadrons, &b_patElectron_isoChargedHadrons);
+	BOOM->SetBranchAddress("patElectron_isoNeutralHadrons", &patElectron_isoNeutralHadrons, &b_patElectron_isoNeutralHadrons);
 	BOOM->SetBranchAddress("patElectron_isoPhotons", &patElectron_isoPhotons, &b_patElectron_isoPhotons);
 	BOOM->SetBranchAddress("patElectron_isoPU", &patElectron_isoPU, &b_patElectron_isoPU);
 	BOOM->SetBranchAddress("patElectron_charge", &patElectron_charge, &b_patElectron_charge);
@@ -1207,21 +1724,19 @@ void BSM_Analysis::setBranchAddress(TTree* BOOM)
 	BOOM->SetBranchAddress("Jet_energy", &Jet_energy, &b_Jet_energy);
 	BOOM->SetBranchAddress("Jet_bDiscriminator", &Jet_bDiscriminator, &b_Jet_bDiscriminator);
 	BOOM->SetBranchAddress("Jet_bDiscriminator_cMVAv2", &Jet_bDiscriminator_cMVAv2, &b_Jet_bDiscriminator_cMVAv2);
-	BOOM->SetBranchAddress("Jet_puppi_bDiscriminator_cMVAv2", &Jet_puppi_bDiscriminator_cMVAv2,
-			&b_Jet_puppi_bDiscriminator_cMVAv2);
+	BOOM->SetBranchAddress("Jet_puppi_bDiscriminator_cMVAv2", &Jet_puppi_bDiscriminator_cMVAv2, &b_Jet_puppi_bDiscriminator_cMVAv2);
 	BOOM->SetBranchAddress("Jet_mass", &Jet_mass, &b_Jet_mass);
-	BOOM->SetBranchAddress("Jet_neutralHadEnergyFraction", &Jet_neutralHadEnergyFraction,
-			&b_Jet_neutralHadEnergyFraction);
-	BOOM->SetBranchAddress("Jet_neutralEmEmEnergyFraction", &Jet_neutralEmEmEnergyFraction,
-			&b_Jet_neutralEmEmEnergyFraction);
-	BOOM->SetBranchAddress("Jet_chargedHadronEnergyFraction", &Jet_chargedHadronEnergyFraction,
-			&b_Jet_chargedHadronEnergyFraction);
+	BOOM->SetBranchAddress("Jet_neutralHadEnergyFraction", &Jet_neutralHadEnergyFraction, &b_Jet_neutralHadEnergyFraction);
+	BOOM->SetBranchAddress("Jet_neutralEmEmEnergyFraction", &Jet_neutralEmEmEnergyFraction, &b_Jet_neutralEmEmEnergyFraction);
+	BOOM->SetBranchAddress("Jet_chargedHadronEnergyFraction", &Jet_chargedHadronEnergyFraction, &b_Jet_chargedHadronEnergyFraction);
 	BOOM->SetBranchAddress("Jet_chargedEmEnergyFraction", &Jet_chargedEmEnergyFraction, &b_Jet_chargedEmEnergyFraction);
 	BOOM->SetBranchAddress("Jet_muonEnergyFraction", &Jet_muonEnergyFraction, &b_Jet_muonEnergyFraction);
 	BOOM->SetBranchAddress("Jet_electronEnergy", &Jet_electronEnergy, &b_Jet_electronEnergy);
 	BOOM->SetBranchAddress("Jet_photonEnergy", &Jet_photonEnergy, &b_Jet_photonEnergy);
 	BOOM->SetBranchAddress("UncorrJet_pt", &UncorrJet_pt, &b_UncorrJet_pt);
 	BOOM->SetBranchAddress("bestVertices", &bestVertices, &b_bestVertices);
+	BOOM->SetBranchAddress("Met_type1PF_pt", &Met_type1PF_pt, &b_Met_type1PF_pt);
+	BOOM->SetBranchAddress("Met_type1PF_sumEt", &Met_type1PF_sumEt, &b_Met_type1PF_sumEt);
 	BOOM->SetBranchAddress("Met_puppi_pt", &Met_puppi_pt, &b_Met_puppi_pt);
 	BOOM->SetBranchAddress("Met_puppi_sumEt", &Met_puppi_sumEt, &b_Met_puppi_sumEt);
 	BOOM->SetBranchAddress("Met_puppi_phi", &Met_puppi_phi, &b_Met_puppi_phi);
@@ -1243,5 +1758,6 @@ void BSM_Analysis::setBranchAddress(TTree* BOOM)
 
 	BOOM->SetBranchAddress("Met_type1PF_shiftedPtUp", &Met_type1PF_shiftedPtUp, &b_Met_type1PF_shiftedPtUp);
 	BOOM->SetBranchAddress("Met_type1PF_shiftedPtDown", &Met_type1PF_shiftedPtDown, &b_Met_type1PF_shiftedPtDown);
+	BOOM->SetBranchAddress("pvertex_z", &pvertex_z, &b_pvertex_z);
 }
 ;
