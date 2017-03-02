@@ -333,39 +333,39 @@ BSM_Analysis::BSM_Analysis(TFile* theFile, TDirectory *cdDir[], int nDir, char* 
 
 					//------------Rel iso Selection-------------------------------------------
 					//------- If the events didn`t pass the rel iso, but pass reliso-gamma----
-					if (RelIso1 >= 0.05 && RelIso2 >= 0.05)
+					if (RelIso1 >= 0.25 && RelIso2 >= 0.25)
 					{
 						histos.fillHistogram(strtest + tagothers, strIsolation1, RelIso1, pu_weight);
 						histos.fillHistogram(strtest + tagothers, strIsolation2, RelIso2, pu_weight);
 						BothNoreliso++;
-						if (TrackIsoGamma(RelIso1, RelIso2, Reco_lepton1, Reco_lepton2, FSR_PhotonToLep1, FSR_PhotonToLep2))
+						/*if (TrackIsoGamma(RelIso1, RelIso2, Reco_lepton1, Reco_lepton2, FSR_PhotonToLep1, FSR_PhotonToLep2))
 						{
 							pass_dimuon_RelIso = true;
 							PassRelisoNoFSR++;
-						}
-						/*if (RelIso_NoFSR1 < 0.25 && RelIso_NoFSR2 < 0.25)
+						}*/
+						if (RelIso_NoFSR1 < 0.25 && RelIso_NoFSR2 < 0.25)
 						 {
 						 pass_dimuon_RelIso = true;
 						 PassRelisoNoFSR++;
-						 }*/
+						 }
 					}
 
-					if ((RelIso1 >= 0.05 && RelIso2 < 0.05) || (RelIso1 < 0.05 && RelIso2 >= 0.05))
+					if ((RelIso1 >= 0.25 && RelIso2 < 0.25) || (RelIso1 < 0.25 && RelIso2 >= 0.25))
 					{
 						OneNoreliso++;
-						if (TrackIsoGamma(RelIso1, RelIso2, Reco_lepton1, Reco_lepton2, FSR_PhotonToLep1, FSR_PhotonToLep2))
+						/*if (TrackIsoGamma(RelIso1, RelIso2, Reco_lepton1, Reco_lepton2, FSR_PhotonToLep1, FSR_PhotonToLep2))
 						{
 							pass_dimuon_RelIso = true;
 							PassRelisoNoFSR++;
-						}
-						/*if (RelIso_NoFSR1 < 0.25 && RelIso_NoFSR2 < 0.25)
+						}*/
+						if (RelIso_NoFSR1 < 0.25 && RelIso_NoFSR2 < 0.25)
 						 {
 						 pass_dimuon_RelIso = true;
 						 PassRelisoNoFSR++;
-						 }*/
+						 }
 					}
 					//-----------If the events pass the rel iso-----------------------------------
-					if (RelIso1 < 0.05 && RelIso2 < 0.05)
+					if (RelIso1 < 0.25 && RelIso2 < 0.25)
 					{
 						RelIsoReal++;
 						pass_dimuon_RelIso = true;
@@ -1092,7 +1092,7 @@ BSM_Analysis::BSM_Analysis(TFile* theFile, TDirectory *cdDir[], int nDir, char* 
 		cout << "Events not pass iso with one FSR Ph:        " << GF_BBTightNoIso_OneFSR << endl;
 		cout << "Events not pass iso with two FSR Ph:        " << GF_BBTightNoIso_TwoFSR << endl;
 		cout << "------------------------GF BEBO Tight-----------------------" << endl;
-		cout << "Events in category GF BB Tight:         " << GF_BEBO_Tight_cat << endl;
+		cout << "Events in category GF BEBO Tight:         " << GF_BEBO_Tight_cat << endl;
 		cout << "Events that pass isolation:         " << GF_BEBOTight_Iso << endl;
 		cout << "Events pass iso, closer to H or without FSR Ph:    " << GF_BEBOTightIso_NOFSR << endl;
 		cout << "Events pass iso with one FSR Ph:        " << GF_BEBOTightIso_OneFSR << endl;
@@ -1102,7 +1102,7 @@ BSM_Analysis::BSM_Analysis(TFile* theFile, TDirectory *cdDir[], int nDir, char* 
 		cout << "Events not pass iso with one FSR Ph:        " << GF_BEBOTightNoIso_OneFSR << endl;
 		cout << "Events not pass iso with two FSR Ph:        " << GF_BEBOTightNoIso_TwoFSR << endl;
 		cout << "------------------------GF EEOO Tight-----------------------" << endl;
-		cout << "Events in category GF BB Tight:         " << GF_EEOO_Tight_cat << endl;
+		cout << "Events in category GF EEOO Tight:         " << GF_EEOO_Tight_cat << endl;
 		cout << "Events that pass isolation:         " << GF_EEOOTight_Iso << endl;
 		cout << "Events pass iso, closer to H or without FSR Ph:    " << GF_EEOOTightIso_NOFSR << endl;
 		cout << "Events pass iso with one FSR Ph:        " << GF_EEOOTightIso_OneFSR << endl;
@@ -1122,7 +1122,7 @@ BSM_Analysis::BSM_Analysis(TFile* theFile, TDirectory *cdDir[], int nDir, char* 
 		cout << "Events not pass iso with one FSR Ph:        " << GF_BBLooseNoIso_OneFSR << endl;
 		cout << "Events not pass iso with two FSR Ph:        " << GF_BBLooseNoIso_TwoFSR << endl;
 		cout << "------------------------GF BEBO Loose-----------------------" << endl;
-		cout << "Events in category GF BB Loose:         " << GF_BEBO_Loose_cat << endl;
+		cout << "Events in category GF BEBO Loose:         " << GF_BEBO_Loose_cat << endl;
 		cout << "Events that pass isolation:         " << GF_BEBOLoose_Iso << endl;
 		cout << "Events pass iso, closer to H or without FSR Ph:    " << GF_BEBOLooseIso_NOFSR << endl;
 		cout << "Events pass iso with one FSR Ph:        " << GF_BEBOLooseIso_OneFSR << endl;
@@ -1132,7 +1132,7 @@ BSM_Analysis::BSM_Analysis(TFile* theFile, TDirectory *cdDir[], int nDir, char* 
 		cout << "Events not pass iso with one FSR Ph:        " << GF_BEBOLooseNoIso_OneFSR << endl;
 		cout << "Events not pass iso with two FSR Ph:        " << GF_BEBOLooseNoIso_TwoFSR << endl;
 		cout << "------------------------GF EEOO Loose-----------------------" << endl;
-		cout << "Events in category GF BB Loose:         " << GF_EEOO_Loose_cat << endl;
+		cout << "Events in category GF EEOO Loose:         " << GF_EEOO_Loose_cat << endl;
 		cout << "Events that pass isolation:         " << GF_EEOOLoose_Iso << endl;
 		cout << "Events pass iso, closer to H or without FSR Ph:    " << GF_EEOOLooseIso_NOFSR << endl;
 		cout << "Events pass iso with one FSR Ph:        " << GF_EEOOLooseIso_OneFSR << endl;
@@ -1142,7 +1142,7 @@ BSM_Analysis::BSM_Analysis(TFile* theFile, TDirectory *cdDir[], int nDir, char* 
 		cout << "Events not pass iso with one FSR Ph:        " << GF_EEOOLooseNoIso_OneFSR << endl;
 		cout << "Events not pass iso with two FSR Ph:        " << GF_EEOOLooseNoIso_TwoFSR << endl;
 		cout << "------------------------GF Two Jets-----------------------" << endl;
-		cout << "Events in category GF BB Loose:         " << GF_TwoJets_cat << endl;
+		cout << "Events in category GF TwoJets:         " << GF_TwoJets_cat << endl;
 		cout << "Events that pass isolation:         " << GF_TwoJets_Iso << endl;
 		cout << "Events pass iso, closer to H or without FSR Ph:    " << GF_TwoJetsIso_NOFSR << endl;
 		cout << "Events pass iso with one FSR Ph:        " << GF_TwoJetsIso_OneFSR << endl;
@@ -1241,10 +1241,10 @@ void BSM_Analysis::MuonsVectors(TLorentzVector& Reco_lepton1, TLorentzVector& Re
 						Reco_lepton1 = first_muon_vec;
 						Reco_lepton2 = Subfirst_muon_vec;
 						dimuon_mass_int = dimuon_mass;
-						//RelIso1 = Muon_combinedIso->at(m1);				//Muon_isoSum->at(m1) / Muon_pt->at(m1);
-						//RelIso2 = Muon_combinedIso->at(m2);				//Muon_isoSum->at(m2) / Muon_pt->at(m2);
-						RelIso1 = Muon_trackRe_iso->at(m1);			//track iso
-						RelIso2 = Muon_trackRe_iso->at(m2);	    //track iso
+						RelIso1 = Muon_combinedIso->at(m1);				//Muon_isoSum->at(m1) / Muon_pt->at(m1);
+						RelIso2 = Muon_combinedIso->at(m2);				//Muon_isoSum->at(m2) / Muon_pt->at(m2);
+						//RelIso1 = Muon_trackRe_iso->at(m1);			//track iso
+						//RelIso2 = Muon_trackRe_iso->at(m2);	    //track iso
 
 						RelIso_NoFSR1 = (Muon_isoCharged->at(m1) + max(0., Muon_isoNeutralHadron->at(m1) - 0.5 * (Muon_isoPU->at(m1)))) / Muon_pt->at(m1);
 						RelIso_NoFSR2 = (Muon_isoCharged->at(m2) + max(0., Muon_isoNeutralHadron->at(m2) - 0.5 * (Muon_isoPU->at(m2)))) / Muon_pt->at(m2);
@@ -1450,14 +1450,11 @@ int BSM_Analysis::JetsVector(TLorentzVector& Muon1, TLorentzVector& Muon2)
 			}
 		}
 	}
+
 	if (VBF_Tight == true)
-	{
 		return 1;
-	}
 	if (VBF_Loose == true)
-	{
 		return 2;
-	}
 	return 0;
 }
 
@@ -1468,6 +1465,9 @@ int BSM_Analysis::GFCategories(TLorentzVector& Muon1, TLorentzVector& Muon2)
 	double MuEta2 = abs(Muon2.Eta());
 	bool GF_BB_Tight = false, GF_BB_Loose = false, GF_BEBO_Tight = false, GF_BEBO_Loose = false, GF_EEOO_Tight = false, GF_EEOO_Loose = false;
 	bool GF_TwoJets = false;
+	TLorentzVector Jet_temp(0., 0., 0., 0.);
+	vector<TLorentzVector> Jets_passpresel_vec;
+	Jets_passpresel_vec.erase(Jets_passpresel_vec.begin(), Jets_passpresel_vec.end());
 
 	if (Jet_pt->size() < 2 || Jet_puppi_pt->size() < 2)
 	{
@@ -1504,10 +1504,23 @@ int BSM_Analysis::GFCategories(TLorentzVector& Muon1, TLorentzVector& Muon2)
 			}
 		}
 	}
-	if (Jet_pt->size() >= 2 || Jet_puppi_pt->size() >= 2)
+
+	if (Jet_pt->size() > 1 && Met_type1PF_pt < 40.0)
 	{
-		GF_TwoJets = true;
+		for (int m1 = 0; m1 < Jet_pt->size(); m1++)
+		{
+			if (Jet_pt->at(m1) > 30.0 && Jet_eta->at(m1) < 2.4 && Jet_bDiscriminator_cMVAv2->at(m1) > 0.8484)
+				continue;
+			if (Jet_pt->at(m1) > 30.0 && Jet_eta->at(m1) < 4.7)
+			{
+				Jet_temp.SetPtEtaPhiE(Jet_pt->at(m1), Jet_eta->at(m1), Jet_phi->at(m1), Jet_energy->at(m1));
+				Jets_passpresel_vec.push_back(Jet_temp);
+			}
+		}
 	}
+
+	if (Jets_passpresel_vec.size() > 1)
+		GF_TwoJets = true;
 
 	if (GF_BB_Tight == true)
 		return 1;
