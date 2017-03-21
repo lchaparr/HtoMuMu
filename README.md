@@ -44,3 +44,6 @@ It is mandatory have an n-tuple made using the TNT Maker.
 
 ##FSR Photons
 Photons from PF paticle collection. The Selector, save the relevant parameters as phi, eta, pt, energy, RelISo, etc., in the n-tuples. The code for ntuplizer (https://github.com/florez/NtupleMaker_740/tree/for_CMSSW_8X) must be modify in order to obtain the FSR photons using this selector.
+
+##Ntuples
+Ntuple code used for Moriond's samples is located at https://github.com/florez/NtupleMaker_740/tree/for_CMSSW_8025, but must be modify in order to make muon trigger match and FSR photons. The files that you need modified are located at Ntuple_maker directory.
