@@ -5,6 +5,7 @@
 #ifndef BSM_Analysis_h
 #define BSM_Analysis_h
 
+
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -25,28 +26,36 @@
 #include <TLorentzVector.h>
 #include <TDirectory.h>
 #include "DataFormats/Math/interface/deltaR.h"////
-
+#include "RoccoR.cc"
 using namespace std;
+double const MASS_MUON = 0.105658367;
 
 class BSM_Analysis
 {
+	RoccoR rc;
+	bool data;
 public:
-	BSM_Analysis(TFile*, TDirectory* dir[], int nDir, char*, char*);
+	BSM_Analysis(std::string, TDirectory* dir[], int nDir, char*, char*, char*);
 	~BSM_Analysis();
 
 	// create Histo maps
 
 	bool passRecoTrigger(string, string);
-	void MuonsVectors(TLorentzVector&, TLorentzVector&, double&, double&, double&, double&);
+	double Rhocorfactor(RoccoR& rc, int lepton_index);
+	bool MuonsVectors(TLorentzVector& Reco_lepton1, TLorentzVector& Reco_lepton2, double& RelIso_NoFSR1,
+			double& RelIso_NoFSR2, RoccoR& rc);
+	//void MuonsVectors(TLorentzVector&, TLorentzVector&, double&, double&, double&, double&, bool, RoccoR&);
 	void PhotonsVectors(vector<TLorentzVector>&);
 	bool TrackIsoGamma(double&, double&, TLorentzVector&, TLorentzVector&, TLorentzVector&, TLorentzVector&);
 	void GenleptonVector(TLorentzVector&, TLorentzVector&);
 	void PhotonsGenVectors(vector<TLorentzVector>&, TLorentzVector&);
 	double FSRdeltaR(TLorentzVector&, TLorentzVector&);
 	double FSRDROverET2(TLorentzVector&, double);
-	int JetsVector(TLorentzVector&,TLorentzVector&);
+	int EventCategory(TLorentzVector&,TLorentzVector&);
 	int GFCategories(TLorentzVector&, TLorentzVector&);
 	bool BestFSRPhoton(double);
+	bool BtagVeto();
+	bool Electron_veto(TLorentzVector&, TLorentzVector&);
 
 	// Define maps for histograms
 
@@ -54,7 +63,7 @@ public:
 	void setBranchAddress(TTree* BOOM);
 	vector<string> *Trigger_names;
 	vector<int> *Trigger_decision;
-
+  vector<bool> *Muon_isTriggerMatched;
 	vector<double> *Muon_pt;
 	vector<double> *Muon_eta;
 	vector<double> *Muon_phi;
@@ -65,6 +74,7 @@ public:
 	vector<bool> *Muon_medium;
 	vector<bool> *Muon_soft;
 	vector<bool> *Muon_pf;
+        vector<bool> *Muon_isGlobal;
 	vector<double> *Muon_isoCharged;
 	vector<double> *Muon_isoSum;
 	vector<double> *Muon_isoCharParPt;
@@ -129,7 +139,7 @@ public:
 	vector<double> *Jet_eta;
 	vector<double> *Jet_phi;
 	vector<double> *Jet_energy;
-	vector<double> *Jet_bDiscriminator;
+
 	vector<double> *Jet_mass;
 	vector<double> *Jet_neutralHadEnergyFraction;
 	vector<double> *Jet_neutralEmEmEnergyFraction;
@@ -139,8 +149,8 @@ public:
 	vector<double> *Jet_electronEnergy;
 	vector<double> *Jet_photonEnergy;
 	vector<double> *UncorrJet_pt;
-	vector<double> *Jet_bDiscriminator_cMVAv2;
-	vector<double> *Jet_puppi_bDiscriminator_cMVAv2;
+	vector<double> *Jet_bDiscriminator_pfCMVAV2;
+	vector<double> *Jet_puppi_bDiscriminator_pfCMVAV2;
 	//Int_t           npuVertices;
 	Float_t ntruePUInteractions;
 	//Int_t           ootnpuVertices;
@@ -157,6 +167,7 @@ public:
 	vector<double> *Jet_puppi_pt;
 
 	Double_t Gen_Met;
+	int eventNumber;
 	vector<double> *Gen_pt;
 	vector<double> *Gen_eta;
 	vector<double> *Gen_phi;
@@ -174,6 +185,7 @@ public:
 	// List of branches
 	TBranch *b_Trigger_names;
 	TBranch *b_Trigger_decision;
+	TBranch *b_Muon_isTriggerMatched;
 	TBranch *b_Muon_pt;   //!
 	TBranch *b_Muon_eta;   //!
 	TBranch *b_Muon_phi;   //!
@@ -229,6 +241,7 @@ public:
 	TBranch *b_Photon_PFPhoIso;
 	TBranch *b_Photon_PFNeuIso;
 	TBranch *b_Photon_EleVeto;
+        TBranch *b_Muon_isGlobal;
 
 	TBranch *b_FSRPhoton_pt;
 	TBranch *b_FSRPhoton_eta;
@@ -248,7 +261,6 @@ public:
 	TBranch *b_Jet_eta;   //!
 	TBranch *b_Jet_phi;   //!
 	TBranch *b_Jet_energy;   //!
-	TBranch *b_Jet_bDiscriminator;   //!
 	TBranch *b_Jet_mass;   //!
 	TBranch *b_Jet_neutralHadEnergyFraction;   //!
 	TBranch *b_Jet_neutralEmEmEnergyFraction;   //!
@@ -259,8 +271,8 @@ public:
 	TBranch *b_Jet_photonEnergy;   //!
 	TBranch *b_UncorrJet_pt;   //!
 	TBranch *b_Jet_puppi_pt;   //!
-	TBranch *b_Jet_bDiscriminator_cMVAv2;
-	TBranch *b_Jet_puppi_bDiscriminator_cMVAv2;
+	TBranch *b_Jet_bDiscriminator_pfCMVAV2;
+	TBranch *b_Jet_puppi_bDiscriminator_pfCMVAV2;
 	//TBranch        *b_npuVertices;   //!
 	TBranch *b_ntruePUInteractions;   //!
 	//TBranch        *b_ootnpuVertices;   //!
@@ -288,6 +300,7 @@ public:
 	TBranch *b_Met_type1PF_shiftedPtUp;   //!
 	TBranch *b_Met_type1PF_shiftedPtDown;   //!
 	TBranch *b_pvertex_z;
+	TBranch *b_eventNumber;
 	//TBranch        *b_Met_shiftedPtUp;   //!
 	//TBranch        *b_Met_shiftedPtDown;   //!
 };
