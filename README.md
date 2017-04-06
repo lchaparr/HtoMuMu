@@ -32,15 +32,10 @@ To Run the GenLevel analisis code:
 	cmsRun BasicTester_cfg.py
 
 ## RecoLevel
-Based on https://github.com/florez/NtupleAnalyzer/tree/master/BSM3G_TNT_simpleTemplete_Analyzer
-
-	git clone https://github.com/florez/NtupleAnalyzer
-	cd BSM3G_TNT_simpleTemplete_Analyzer
-Replace *.cc and *.h
-
-	make BSM_Analysis
-	./BSM_Analysis INPUT_FILE OUTPUT_FILE
+	make 
+	./H2MuAnalysis -i INPUT_FILE 
 It is mandatory have an n-tuple made using the TNT Maker.
+There are another options like rochester correction off or on. ./H2MuAnalysis -h list all of them.
 
 ## FSR Photons
 Photons from PF paticle collection. The Selector, save the relevant parameters as phi, eta, pt, energy, RelISo, etc., in the n-tuples. The code for ntuplizer (https://github.com/florez/NtupleMaker_740/tree/for_CMSSW_8X) must be modify in order to obtain the FSR photons using this selector.
