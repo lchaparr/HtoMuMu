@@ -12,6 +12,8 @@
 #include "EventManager.h"
 #include "ElectronManager.h"
 #include "cmdparser.hpp"
+#include "FSRManager.h"
+#include <TLorentzVector.h>
 #include <fstream>
 #include <iostream>
 
@@ -19,7 +21,7 @@
 using namespace std;
 
 std::string configure_parser(cli::Parser& program_options);
-double const MASS_MUON = 0.105658367;
+double const MASS_MUON = 0.1056583670;
 
 int main(int argc, char **argv)
     {
@@ -33,46 +35,39 @@ int main(int argc, char **argv)
     TFile* f = TFile::Open((program_options.getAlternative<std::string>("input-file")).c_str());
     f->cd("TNT");
     TTree* tree = (TTree*) f->Get("TNT/BOOM");
-    EventManager event(tree);
+    EventManager event(tree, program_options, running_configuration);
     ElectronManager electrons(tree);
     MuonManager muons(tree, event.getIsRealData(), program_options);
     JetManager jets(tree, program_options);
-    int cVbfTight = 0;
+    FSRManager fsr(tree);
     ofstream outputTxt;
     outputTxt.open("output.txt");
     ofstream outputSummary;
     outputSummary.open(output_file_txt);
-    int cggFTight = 0;
-    int cVbfLoose = 0;
-    int czero1jetTight = 0;
-    int czero1jetLoose = 0;
     int trigger = 0;
     int eventElectronVeto = 0;
     int eventBjetVeto = 0;
-    int selectedEventCounter = 0;
     int nentries = tree->GetEntries();
-    //nentries = 100;
+    map<string, int> counters;
     for (int i = 0; i < nentries; i++)
 	{
 	if (i%10000 == 0 ) cout<< "Event " << i << endl;
 	tree->GetEntry(i);
 	int eventNumber = event.getEventNumber();
-	//cout << event.getEventNumber() << endl;
 	// First we check if event passses the trigger
-	//cout << event.isRealData << "\tEvent Number: "<< (event.eventNumber) <<"\tLumi:" <<  (event.lumiBlock)<<"\tRun:"<< (event.runNumber) << endl;
-	bool eventPassesTrigger = false;
+	event.eventPassesTrigger = false;
 	if (event.isTriggerMatched())
 	    {
-	    eventPassesTrigger = true;
+	    event.eventPassesTrigger = true;
 	    trigger++;
 	    }
 	// if the event passes the trigger we check if it passes the bjet veto.
-	bool eventisNotBJetVetoed = false;
-	if (eventPassesTrigger)
+	event.eventisNotBJetVetoed = false;
+	if (event.eventPassesTrigger)
 	    {
 	    if (!jets.bJetVeto())
 		{
-		eventisNotBJetVetoed = true;
+		event.eventisNotBJetVetoed = true;
 		}
 	    else
 		{
@@ -81,151 +76,80 @@ int main(int argc, char **argv)
 	    }
 	// If event passes the bjetVeto, we see if it passes Muon selection
 
-	bool eventPassesMuonSelection = true;
-	std::vector<Muon> selectedMuons;
+	event.eventPassesMuonSelection = true;
+	event.eventPassesRelIso = true;
 	TLorentzVector dimuon;
-
 	try
 	    {
-	    selectedMuons = muons.selectMuonsPFIso();
-	    dimuon = selectedMuons.at(0).getTLorentz() + selectedMuons.at(1).getTLorentz();
-	    if (dimuon.M() < 12.0)
+	    event.muons = muons.selectMuonsPFIso();
+	    event.Dimuon = event.muons.at(0).getTLorentz() + event.muons.at(1).getTLorentz();
+	    if (event.Dimuon.M() < 12.0)
 		{
-		eventPassesMuonSelection = false;
+		event.eventPassesMuonSelection = false;
+		event.eventPassesRelIso = false;
+
 		}
 
 	    }
 	catch (int e)
 	    {
-	    eventPassesMuonSelection = false;
+	    event.eventPassesMuonSelection = false;
 	    }
 
-	// If there is no exception, there are 2 muons in selectedMuons. check electron veto
-	bool eventisNotElectronVeto = false;
-	if (eventPassesMuonSelection)
+	// If the event passes muon selection, let's do FSR Recovery
+	if (program_options.getAlternative<bool>("fsr")){
+	if (event.eventPassesMuonSelection){
+	 std::vector<FSRPhoton> fsrPhotons2;
+	 std::vector<FSRPhoton> fsrPhotons = fsr.selectFSRPhotons(event.muons);
+	 TLorentzVector DimuonPH = event.Dimuon;
+	 for (auto fsrph :fsrPhotons){
+	     DimuonPH += fsrph.getTLorentz();
+	 }
+	 if (!(abs(125.0 - event.Dimuon.M()) <= abs(125.0 - DimuonPH.M())))
+	 {
+	     event.fsrPhotons = fsrPhotons;
+	 }
+	 else{
+	     event.fsrPhotons = fsrPhotons2;
+	 }
+	}
+	}
+	// If there is no exception, there are 2 muons in event.muons. check electron veto
+	event.eventisNotElectronVeto = false;
+	if (event.eventPassesMuonSelection)
 	    {
-	    if (!electrons.electronVeto(selectedMuons))
+	    if (!electrons.electronVeto(event.muons))
 		{
-		eventisNotElectronVeto = true;
+		event.eventisNotElectronVeto = true;
 		}
 	    else
 		{
-		//cout << event.getEventNumber() << endl;
 		eventElectronVeto++;
 		}
 	    }
-	// Event Selection
-	bool eventPassesEventSelection = false;
-	if (eventPassesTrigger && eventPassesMuonSelection && eventisNotElectronVeto && eventisNotBJetVetoed)
-	    {
-	    eventPassesEventSelection = true;
-	    selectedEventCounter++;
-	    }
+
 	// At this point we know if the event is selected!
-	std::vector<Jet> selectedJets;
-	bool eventPassesJetPreselection = true;
-	if (eventPassesEventSelection)
+	event.eventPassesJetPreselection = true;
+	if (event.eventPassesEventSelection())
 	    {
 	    try
 		{
-		selectedJets = jets.selectJets(selectedMuons);
+		event.jets = jets.selectJets(event.muons);
 		}
 	    catch (int e)
 		{
-		eventPassesJetPreselection = false;
+		event.eventPassesJetPreselection = false;
 		}
 	    }
-	// At this point we know that the event is selected, and if at least there are two jets in selectedJets
-	bool VbfTight = false;
-	bool ggFTight = false;
-	bool VbfLoose = false;
-	bool zero1jetTight = false;
-	bool zero1jetLoose = false;
-	if (eventPassesEventSelection && eventisNotBJetVetoed)
-	    {
-	    if (eventPassesJetPreselection)
-		{
-		VbfLoose = true;
-		for (auto jet1 : selectedJets)
-		    {
-		    if (VbfTight == true)
-			break;
-		    for (auto jet2 : selectedJets)
-			{
-			if (!aux::isSameParticle<Jet>(jet1, jet2) && (jet1.pt() > 40 || jet2.pt() > 40))
-			    {
-			    TLorentzVector dijet = jet1.getTLorentz() + jet2.getTLorentz();
-			    if (dijet.M() > 650.0 && abs(jet1.eta() - jet2.eta()) > 3.5)
-				{
-				VbfTight = true;
-				break;
-				}
-			    if (dijet.M() > 250.0 && dimuon.Pt() > 50.0)
-				{
-				ggFTight = true;
-				}
-			    }
-			}
-		    }
-		}
-	    else if (!eventPassesJetPreselection)
-		{
-		zero1jetLoose = true;
-		if (dimuon.Pt() >= 25.0)
-		    {
-		    zero1jetTight = true;
-		    }
-		}
-
-	    if (VbfTight)
-		{
-		cVbfTight++;
-		outputTxt << "VbfTight\t" << eventNumber << endl;
-		}
-	    else if (ggFTight)
-		{
-		cggFTight++;
-		outputTxt << "ggFTight\t" << eventNumber <<  endl;
-
-		}
-	    else if (VbfLoose)
-		{
-		cVbfLoose++;
-		outputTxt << "cVbfLoose\t" << eventNumber <<  endl;
-
-		}
-	    else if (zero1jetTight)
-		{
-		czero1jetTight++;
-		outputTxt << "fzero1jetTight\t" << eventNumber <<  endl;
-
-		}
-	    else if (zero1jetLoose)
-		{
-		czero1jetLoose++;
-		outputTxt << "fzero1jetLoose\t" << eventNumber << endl;
-
-		}
-	    VbfTight = false;
-	    ggFTight = false;
-	    VbfLoose = false;
-	    zero1jetTight = false;
-	    zero1jetLoose = false;
-	    }
+	// At this point we know that the event is selected, and if at least there are two jets in event.jets, let's classify it.
+	    string classification = event.classifyEvent();
+	    event.saveEvent();
+	    counters[classification] = counters[classification] + 1;
 	}
-    outputSummary << running_configuration << "| Trigger |" << trigger << endl;
-    outputSummary << running_configuration << "| NOT pass ElectronVeto |" << eventElectronVeto << endl;
-    outputSummary << running_configuration << "| NOT pass BjetVeto |" << eventBjetVeto << endl;
-    outputSummary << running_configuration << "| VbfTight |" << cVbfTight << endl;
-    outputSummary << running_configuration << "| ggFTight |" << cggFTight << endl;
-    outputSummary << running_configuration << "| VbfLoose |" << cVbfLoose << endl;
-    outputSummary << running_configuration << "| zero1jetTight |" << czero1jetTight << endl;
-    outputSummary << running_configuration << "| zero1jetLoose |" << czero1jetLoose << endl;
-    outputSummary << running_configuration << "|total select |" << selectedEventCounter << endl;
-    outputSummary << running_configuration << "| Total events |" << cVbfTight + cggFTight + cVbfLoose + czero1jetTight + czero1jetLoose << endl;
-    outputSummary << running_configuration << "| Total in file | " << tree->GetEntries() << endl;
-    outputTxt.close();
-    outputSummary.close();
+    for (auto counter : counters){
+	outputSummary << running_configuration << "|" << counter.first << "|" << counter.second << endl;
+    }
+
     delete tree;
     delete f;
     cout << "Execution finished" << endl;
@@ -240,7 +164,8 @@ std::string configure_parser(cli::Parser& program_options)
     program_options.set_optional<double>("p", "minMuonPt", 10.0, "Minimum pt Value for Muons");
     program_options.set_optional<double>("j", "minJetPt", 30.0, "Maximum pt Value for jet selection");
     program_options.set_optional<bool>("g", "noGenMatching", false, "Use Gen object matching in Rochester corrections");
-    program_options.set_optional<bool>("c", "noRochesterCorrections", false, "Apply Rochester corrections");
+    program_options.set_optional<bool>("f", "fsr", false, "Use FSR photons");
+    program_options.set_optional<bool>("c", "noRochesterCorrections", false,  "Apply Rochester corrections");
     program_options.run_and_exit_if_error();
     std::ostringstream oss;
     if (!(program_options.isNonDefault<double>("minMuonPt").empty()))
@@ -253,5 +178,7 @@ std::string configure_parser(cli::Parser& program_options)
 	oss << program_options.isNonDefault<bool>("noGenMatching")<<"-";
     if (!(program_options.isNonDefault<bool>("noRochesterCorrections").empty()))
 	oss << program_options.isNonDefault<bool>("noRochesterCorrections")<<"-";
+    if (!(program_options.isNonDefault<bool>("fsr").empty()))
+    	oss << program_options.isNonDefault<bool>("fsr")<<"-";
     return oss.str();
     }

@@ -1,6 +1,7 @@
 #include "Muon.h"
 #include "MuonManager.h"
 
+
 Muon::Muon(MuonManager* manager, int index){
     this->manager = manager;
     this->index = index;
@@ -194,6 +195,25 @@ std::ostream &operator<<( std::ostream  &output, Muon &muon ){
     output << "Muon particle, pt=" << muon.pt() << ", eta=" << muon.eta() << ", phi=" << muon.phi() <<", charge= " << muon.getMuonCharge() << ", isTriggerMatched=" << muon.isMuonIsTriggerMatched();
     return output;
 }
+
+char Muon::muonGeomertry() const
+    {
+    double eta = this->eta();
+    if (eta <= 0.8)
+	{
+	return 'B';
+	}
+    if (eta > 0.8 && eta < 1.6)
+	{
+	return 'O';
+	}
+    if (eta > 1.6 && eta < 2.4)
+	{
+	return 'E';
+	}
+    return 'U';
+    }
+
 Muon::~Muon()
     {
     // TODO Auto-generated destructor stub

@@ -18,6 +18,7 @@ public:
     double phi() const;
     double eta() const;
     double pt() const;
+    char muonGeomertry() const;
     Muon(MuonManager* manager, int index);
     virtual ~Muon();
     double getMuonCharge() const;
